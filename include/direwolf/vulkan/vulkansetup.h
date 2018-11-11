@@ -9,6 +9,7 @@
 #include <windows.h>
 #endif // _WIN32
 
+namespace dw {
 namespace vulkan {
 
 class TempVulkanSetupObject {
@@ -46,3 +47,4 @@ private: // functions
 };
 
 } // namespace vulkan
+} // namespace dw

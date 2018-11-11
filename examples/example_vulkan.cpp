@@ -11,7 +11,7 @@ void testNonEngineIntergratedVulkan()
     std::vector<const char*> desiredVulkanExtensions = { "VK_KHR_surface" };
 
 #ifdef DW_VULKAN_ENABLED
-    page::vulkan::TempVulkanSetupObject vulkanInitObj(&desiredVulkanExtensions);
+    dw::vulkan::TempVulkanSetupObject vulkanInitObj(&desiredVulkanExtensions);
 
     if (vulkanInitObj.isValid()) {
         std::cout << "\nVulkan was successfully initialized\n\n";

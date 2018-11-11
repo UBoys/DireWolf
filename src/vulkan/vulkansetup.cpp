@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 
-namespace page::vulkan {
+namespace dw::vulkan {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -69,7 +69,7 @@ bool TempVulkanSetupObject::initLibs()
 #elif defined( __linux )
     vulkan_library = dlopen("libvulkan.so.1", RTLD_NOW);
 #else
-    std::cerr << "The PAGE renderer is not yet setup for Vulkan on this platform. Supported operating systems are Linux and Windows" << std::endl;
+    std::cerr << "The DireWolf renderer is not yet setup for Vulkan on this platform. Supported operating systems are Linux and Windows" << std::endl;
     vulkan_library = nullptr;
 #endif
     if (!vulkan_library) {
@@ -353,4 +353,4 @@ bool TempVulkanSetupObject::getPhysicalDeviceExtensions(const VkPhysicalDevice& 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-} // namespace page::vulkan
+} // namespace dw::vulkan

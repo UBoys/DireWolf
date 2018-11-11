@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 
-namespace page::vulkan {
+namespace dw::vulkan {
 
 // TODO: prettyPrint should be moved to some other util, perhaps logUtils (remember the .inl file)
 
@@ -23,6 +23,6 @@ std::string toString(const VkPhysicalDeviceType& deviceType);
 std::string toString(const VkPhysicalDevice& device);
 std::string toString(const VkPhysicalDeviceProperties& properties);
 
-} // namespace page::vulkan
+} // namespace dw::vulkan
 
 #include "vulkanutils.inl"

@@ -6,7 +6,7 @@
 #include <string>
 
 // TODO: fix namespaces
-namespace page::vulkan {
+namespace dw::vulkan {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // PRETTY PRINT
@@ -16,4 +16,4 @@ void prettyPrint(std::ostream& os, const T& t, uint8_t minWidth, const char* pre
     os << prefix << std::setw(minWidth) << t << suffix;
 }
 
-} // namespace page::vulkan
+} // namespace dw::vulkan
