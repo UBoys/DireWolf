@@ -54,7 +54,7 @@ if (DIREWOLF_VULKAN_ENABLED)
   target_include_directories(direwolf
     #TODO this should be PRIVATE.. change when vulkan stuff is included in the direwolf wrappers
     PUBLIC
-      ${Vulkan_INCLUDE_DIR})
+      ${Vulkan_INCLUDE_DIRS})
 
   target_sources(direwolf
     PRIVATE
@@ -77,7 +77,7 @@ if (DIREWOLF_VULKAN_ENABLED)
   if (DIREWOLF_USE_VERBOSE_VULKAN_LOG)
       target_compile_definitions(direwolf
         PRIVATE
-          DW_VERBOSE_LOG_VK = 1
+          DW_VERBOSE_LOG_VK
       )
   endif(DIREWOLF_USE_VERBOSE_VULKAN_LOG)
 
