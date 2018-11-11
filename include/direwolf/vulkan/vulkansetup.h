@@ -25,10 +25,8 @@ private: // variables
     bool m_vulkanRTLFound;
     VkInstance m_instance;
 
-#if defined _WIN32
+#if defined (_WIN32)
     HMODULE vulkan_library;
-#elif defined __linux
-    void* vulkan_library;
 #else
     void* vulkan_library;
 #endif
