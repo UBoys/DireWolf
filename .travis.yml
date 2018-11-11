@@ -1,6 +1,7 @@
 dist: trusty
 language: cpp
-
+notifications:
+  slack: 'skumtomtar:ywqAbt6tmdPgtJBhjwMR0rET#direwolf-builds'
 addons:
   apt:
     sources:
