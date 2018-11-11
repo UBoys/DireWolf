@@ -6,6 +6,10 @@
 #include <iostream>
 #include <string>
 
+#if defined (__APPLE__)
+    #include <dlfcn.h>
+#endif
+
 namespace dw::vulkan {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,9 +103,11 @@ bool TempVulkanSetupObject::initProcAddr()
 #endif // VK_NO_PROTOTYPES
 #endif // DW_VERBOSE_LOG_VK
 
-#if defined( _WIN32 )
+#if defined (_WIN32)
 #define LoadFunction GetProcAddress
-#elif defined __linux
+#elif defined (__linux)
+#define LoadFunction dlsym
+#elif defined (__APPLE__)
 #define LoadFunction dlsym
 #endif
 
