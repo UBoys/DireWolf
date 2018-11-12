@@ -6,8 +6,8 @@
 #include <iostream>
 #include <string>
 
-#if defined (__APPLE__)
-    #include <dlfcn.h>
+#if defined(__APPLE__) || defined(__linux)
+#include <dlfcn.h>
 #endif
 
 namespace dw::vulkan {
@@ -64,14 +64,16 @@ bool TempVulkanSetupObject::initialize(std::vector<const char*>* desiredExtensio
     return true;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////m/////
 
 bool TempVulkanSetupObject::initLibs()
 {
-#if defined( _WIN32 )
+#if defined (_WIN32)
     vulkan_library = LoadLibrary("vulkan-1.dll");
-#elif defined( __linux )
-    vulkan_library = dlopen("libvulkan.so.1", RTLD_NOW);
+#elif defined (__linux)
+    vulkan_library = dlopen("libvulkan.1.so", RTLD_NOW | RTLD_LOCAL);
+#elif defined (__APPLE__)
+    vulkan_library = dlopen("libvulkan.1.dylib", RTLD_NOW | RTLD_LOCAL);
 #else
     std::cerr << "The DireWolf renderer is not yet setup for Vulkan on this platform. Supported operating systems are Linux and Windows" << std::endl;
     vulkan_library = nullptr;
@@ -186,6 +188,7 @@ bool TempVulkanSetupObject::loadInstanceLevelFunctionsFromExtensions(const std::
 bool TempVulkanSetupObject::getAvailableInstanceExtensions(std::vector<VkExtensionProperties>& outAvailableExtensions) const
 {
     if (!m_vulkanRTLFound) {
+        std::cerr << "No vulkan RTL found " << std::endl;
         return false;
     }
 
@@ -224,6 +227,7 @@ bool TempVulkanSetupObject::createVulkanInstance(std::vector<const char*>* desir
 {
     std::vector<VkExtensionProperties> availableExtensions;
     if (!getAvailableInstanceExtensions(availableExtensions)) {
+        std::cerr << "Could not get available instance extensions!" << std::endl;
         return false;
     }
 

@@ -77,7 +77,7 @@ if (DIREWOLF_VULKAN_ENABLED)
   if (DIREWOLF_USE_VERBOSE_VULKAN_LOG)
       target_compile_definitions(direwolf
         PRIVATE
-          DW_VERBOSE_LOG_VK
+          DW_VERBOSE_LOG_VK=1
       )
   endif(DIREWOLF_USE_VERBOSE_VULKAN_LOG)
 
@@ -88,5 +88,3 @@ target_include_directories(direwolf
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
-
-#target_link_libraries(direwolf )
