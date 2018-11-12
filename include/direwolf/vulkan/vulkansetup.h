@@ -22,7 +22,6 @@ public:
 
 private: // variables
     bool m_isValid;
-    bool m_vulkanRTLFound;
     VkInstance m_instance;
 
 #if defined (_WIN32)

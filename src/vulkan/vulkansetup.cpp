@@ -17,7 +17,6 @@ namespace dw::vulkan {
 // TODO: should probably take some init-struct
 TempVulkanSetupObject::TempVulkanSetupObject(std::vector<const char*>* desiredExtensions /* = nullptr */)
 : m_isValid(false)
-, m_vulkanRTLFound(false)
 , m_instance(VK_NULL_HANDLE)
 {
 #if defined( DW_VERBOSE_LOG_VK )
@@ -80,7 +79,6 @@ bool TempVulkanSetupObject::initLibs()
 #endif
     if (!vulkan_library) {
         std::cerr << "Could not connect with a Vulkan Runtime library.\n";
-        m_vulkanRTLFound = false;
         return false;
     }
 
@@ -88,7 +86,6 @@ bool TempVulkanSetupObject::initLibs()
     std::cout << "\tSuccessfully connected with a Vulkan Runtime library.\n";
 #endif
 
-    m_vulkanRTLFound = true;
     return true;
 }
 
@@ -187,8 +184,7 @@ bool TempVulkanSetupObject::loadInstanceLevelFunctionsFromExtensions(const std::
 // TODO: this needs refactoring
 bool TempVulkanSetupObject::getAvailableInstanceExtensions(std::vector<VkExtensionProperties>& outAvailableExtensions) const
 {
-    if (!m_vulkanRTLFound) {
-        std::cerr << "No vulkan RTL found " << std::endl;
+    if (!vulkan_library) {
         return false;
     }
 
