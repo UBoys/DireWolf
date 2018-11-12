@@ -10,6 +10,16 @@
 #include <dlfcn.h>
 #endif
 
+#if defined (_WIN32)
+constexpr char* const VK_LIB_NAME = "vulkan-1.dll";
+#elif defined (__APPLE__)
+constexpr char *const VK_LIB_NAME = "libvulkan.1.dylib";
+#elif defined (__linux)
+constexpr char* const VK_LIB_NAME = "libvulkan.1.so";
+#else
+#error "The DireWolf renderer is not yet setup for Vulkan on this platform. Supported operating systems are Linux and Windows";
+#endif
+
 namespace {
 #if defined(_WIN32)
 HMODULE s_vulkan_library;
@@ -76,14 +86,9 @@ bool TempVulkanSetupObject::initialize(std::vector<const char*>* desiredExtensio
 bool TempVulkanSetupObject::initLibs()
 {
 #if defined (_WIN32)
-    s_vulkan_library = LoadLibrary("vulkan-1.dll");
-#elif defined (__linux)
-    s_vulkan_library = dlopen("libvulkan.1.so", RTLD_NOW | RTLD_LOCAL);
-#elif defined (__APPLE__)
-    s_vulkan_library = dlopen("libvulkan.1.dylib", RTLD_NOW | RTLD_LOCAL);
+    s_vulkan_library = LoadLibrary(VK_LIB_NAME);
 #else
-    std::cerr << "The DireWolf renderer is not yet setup for Vulkan on this platform. Supported operating systems are Linux and Windows" << std::endl;
-    s_vulkan_library = nullptr;
+    s_vulkan_library = dlopen(VK_LIB_NAME, RTLD_NOW | RTLD_LOCAL);
 #endif
     if (!s_vulkan_library) {
         std::cerr << "Could not connect with a Vulkan Runtime library.\n";
