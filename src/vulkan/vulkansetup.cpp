@@ -10,6 +10,14 @@
 #include <dlfcn.h>
 #endif
 
+namespace {
+#if defined(_WIN32)
+HMODULE s_vulkan_library;
+#else
+void *s_vulkan_library;
+#endif
+}
+
 namespace dw::vulkan {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,16 +76,16 @@ bool TempVulkanSetupObject::initialize(std::vector<const char*>* desiredExtensio
 bool TempVulkanSetupObject::initLibs()
 {
 #if defined (_WIN32)
-    vulkan_library = LoadLibrary("vulkan-1.dll");
+    s_vulkan_library = LoadLibrary("vulkan-1.dll");
 #elif defined (__linux)
-    vulkan_library = dlopen("libvulkan.1.so", RTLD_NOW | RTLD_LOCAL);
+    s_vulkan_library = dlopen("libvulkan.1.so", RTLD_NOW | RTLD_LOCAL);
 #elif defined (__APPLE__)
-    vulkan_library = dlopen("libvulkan.1.dylib", RTLD_NOW | RTLD_LOCAL);
+    s_vulkan_library = dlopen("libvulkan.1.dylib", RTLD_NOW | RTLD_LOCAL);
 #else
     std::cerr << "The DireWolf renderer is not yet setup for Vulkan on this platform. Supported operating systems are Linux and Windows" << std::endl;
-    vulkan_library = nullptr;
+    s_vulkan_library = nullptr;
 #endif
-    if (!vulkan_library) {
+    if (!s_vulkan_library) {
         std::cerr << "Could not connect with a Vulkan Runtime library.\n";
         return false;
     }
@@ -111,7 +119,7 @@ bool TempVulkanSetupObject::initProcAddr()
 #endif
 
 #define EXPORTED_VULKAN_FUNCTION( name )                              \
-    name = (PFN_##name)LoadFunction( vulkan_library, #name );         \
+    name = (PFN_##name)LoadFunction( s_vulkan_library, #name );         \
     if ( name == nullptr ) {                                          \
         std::cerr << "Could not load exported Vulkan function named: "\
             #name << std::endl;                                       \
@@ -184,7 +192,7 @@ bool TempVulkanSetupObject::loadInstanceLevelFunctionsFromExtensions(const std::
 // TODO: this needs refactoring
 bool TempVulkanSetupObject::getAvailableInstanceExtensions(std::vector<VkExtensionProperties>& outAvailableExtensions) const
 {
-    if (!vulkan_library) {
+    if (!s_vulkan_library) {
         return false;
     }
 

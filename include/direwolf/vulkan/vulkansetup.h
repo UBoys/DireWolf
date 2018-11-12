@@ -24,12 +24,6 @@ private: // variables
     bool m_isValid;
     VkInstance m_instance;
 
-#if defined (_WIN32)
-    HMODULE vulkan_library;
-#else
-    void* vulkan_library;
-#endif
-
 private: // functions
     bool initLibs();
     bool initProcAddr();
