@@ -1,6 +1,7 @@
 #pragma once
 
 #include "irenderer.h"
+#include "opengl/irendercontext_ogl.h"
 
 namespace dw {
 
@@ -31,6 +32,9 @@ public:
 
     // Actual rendering commands that operate on updated and ready resources.
     virtual void Render(const std::vector<RenderCommand>& commandBuffer){};
+
+private:
+	std::unique_ptr<IRenderContextOGL> m_renderContext;
 };
 
 }  // namespace dw

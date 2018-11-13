@@ -100,8 +100,8 @@ RenderContextWin::RenderContextWin(const PlatformData& platformData) {
         wglSwapIntervalEXT(0);
     }
 
-    std::cout << "DireWolf: Successfully set up OpenGL context with GPU " << vendorString;
-    std::cout << "DireWolf: Running OpenGL version " << versionString;
+    std::cout << "DireWolf: Successfully set up OpenGL context with GPU " << vendorString << std::endl;
+    std::cout << "DireWolf: Running OpenGL version " << versionString << std::endl;
 }
 
 }  // namespace dw

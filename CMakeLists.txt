@@ -51,8 +51,7 @@ if (DIREWOLF_OPENGL_ENABLED)
   target_sources(direwolf 
     PRIVATE 
       src/opengl/renderer_ogl.cpp
-      # TODO: This is not OpenGL specific, or is it?
-      src/irendercontext.h
+      src/opengl/irendercontext_ogl.h
       src/opengl/platform/rendercontext_ogl_win.cpp
       src/opengl/platform/rendercontext_ogl_win.h)
   target_link_libraries(direwolf libglew_static)
