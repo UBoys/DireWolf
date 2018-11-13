@@ -40,7 +40,16 @@ endif()
 if (DIREWOLF_OPENGL_ENABLED)
   message("Including OpenGL")
 
+  add_definitions(-DGLEW_STATIC)
+  add_subdirectory(ext/glew-cmake)
+
+  target_include_directories(direwolf
+    PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/ext/glew-cmake/include
+      ${CMAKE_CURRENT_SOURCE_DIR}/ext/glew-cmake/src)
+
   target_sources(direwolf PRIVATE src/opengl/renderer_ogl.cpp)
+  target_link_libraries(direwolf libglew_static)
 endif (DIREWOLF_OPENGL_ENABLED)
 
 if (DIREWOLF_VULKAN_ENABLED)
