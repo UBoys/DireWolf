@@ -3,6 +3,8 @@
 #include <iostream>
 
 int main() {
+
+    std::cout << "OpenGL example running\n";
     // Setup renderer
     // dwf::InitData initData { dwf::RendererType::RASTERIZER, dwf::BackendType::VULKAN };
     // dwf::PlatformData platformData = { nullptr };
