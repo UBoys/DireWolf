@@ -48,7 +48,13 @@ if (DIREWOLF_OPENGL_ENABLED)
       ${CMAKE_CURRENT_SOURCE_DIR}/ext/glew-cmake/include
       ${CMAKE_CURRENT_SOURCE_DIR}/ext/glew-cmake/src)
 
-  target_sources(direwolf PRIVATE src/opengl/renderer_ogl.cpp)
+  target_sources(direwolf 
+    PRIVATE 
+      src/opengl/renderer_ogl.cpp
+      # TODO: This is not OpenGL specific, or is it?
+      src/irendercontext.h
+      src/opengl/platform/rendercontext_ogl_win.cpp
+      src/opengl/platform/rendercontext_ogl_win.h)
   target_link_libraries(direwolf libglew_static)
 endif (DIREWOLF_OPENGL_ENABLED)
 

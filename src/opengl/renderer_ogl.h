@@ -6,6 +6,7 @@ namespace dw {
 
 struct PlatformData;
 struct InitData;
+
 class RendererOGL final : public IRenderer {
 public:
     virtual void Initialize(const RendererCaps& caps, const PlatformData& data) override;
