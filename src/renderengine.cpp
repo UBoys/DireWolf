@@ -4,7 +4,7 @@
 // TODO: Build definitions should decide what we include and build
 #include "opengl/renderer_ogl.h"
 
-namespace dwf {
+namespace dw {
 
 RenderEngine::RenderEngine(const PlatformData& platformData, const InitData& initData){
     switch(initData.rendererType) {
@@ -36,4 +36,4 @@ void RenderEngine::_SetupRasterizer(const PlatformData& platformData, const Back
     }
 }
 
-}  // namespace pgfx
+}  // namespace dw

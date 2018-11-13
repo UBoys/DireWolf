@@ -2,7 +2,7 @@
 #include "common/config.h"
 #include "renderer_ogl.h"
 
-namespace dwf {
+namespace dw {
 
 void RendererOGL::Initialize(const RendererCaps& caps, const PlatformData& platformData) {
     std::cout << "DireWolf: Initializing OpenGL Renderer\n";
@@ -10,4 +10,4 @@ void RendererOGL::Initialize(const RendererCaps& caps, const PlatformData& platf
 	// Initialize context
 }
 
-}  // namespace pgfx
+}  // namespace dw

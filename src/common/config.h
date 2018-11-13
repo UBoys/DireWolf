@@ -1,6 +1,6 @@
 #pragma once
 
-namespace dwf {
+namespace dw {
 
 enum BackendType {
     NONE,
@@ -24,4 +24,4 @@ struct InitData {
     BackendType backendType;
 };
 
-} // namespace pgfx
+} // namespace dw

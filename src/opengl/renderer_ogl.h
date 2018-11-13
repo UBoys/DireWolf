@@ -2,7 +2,7 @@
 
 #include "irenderer.h"
 
-namespace dwf {
+namespace dw {
 
 struct PlatformData;
 struct InitData;
@@ -32,4 +32,4 @@ public:
     virtual void Render(const std::vector<RenderCommand>& commandBuffer){};
 };
 
-}  // namespace dwf
+}  // namespace dw

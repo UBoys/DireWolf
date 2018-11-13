@@ -25,9 +25,9 @@ void testNonEngineIntergratedVulkan()
 
 int main() {
     // Setup renderer
-    // dwf::InitData initData { dwf::RendererType::RASTERIZER, dwf::BackendType::VULKAN };
-    // dwf::PlatformData platformData = { nullptr };
-    // auto engine = std::make_unique<dwf::RenderEngine>(platformData, initData);
+    // dw::InitData initData { dw::RendererType::RASTERIZER, dw::BackendType::VULKAN };
+    // dw::PlatformData platformData = { nullptr };
+    // auto engine = std::make_unique<dw::RenderEngine>(platformData, initData);
 
     testNonEngineIntergratedVulkan();
 

@@ -4,7 +4,7 @@
 #include "irenderer.h"
 #include "common/config.h"
 
-namespace dwf {
+namespace dw {
 
 class RenderEngine {
 public:
@@ -14,4 +14,4 @@ private:
     std::unique_ptr<IRenderer> m_renderer;
 };
 
-}  // namespace dwf
+}  // namespace dw

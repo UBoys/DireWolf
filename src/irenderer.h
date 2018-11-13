@@ -2,7 +2,7 @@
 
 #include <vector>
 
-namespace dwf {
+namespace dw {
 
 enum RenderCommand {
     SetPipelineState,
@@ -60,4 +60,4 @@ public:
     virtual void Render(const std::vector<RenderCommand>& commandBuffer) = 0;
 };
 
-}
+} // namespace dw
