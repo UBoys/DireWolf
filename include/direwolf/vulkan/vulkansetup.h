@@ -9,7 +9,7 @@
 #include <windows.h>
 #endif // _WIN32
 
-namespace page {
+namespace dw {
 namespace vulkan {
 
 class TempVulkanSetupObject {
@@ -22,16 +22,7 @@ public:
 
 private: // variables
     bool m_isValid;
-    bool m_vulkanRTLFound;
     VkInstance m_instance;
-
-#if defined _WIN32
-    HMODULE vulkan_library;
-#elif defined __linux
-    void* vulkan_library;
-#else
-    void* vulkan_library;
-#endif
 
 private: // functions
     bool initLibs();
@@ -47,4 +38,4 @@ private: // functions
 };
 
 } // namespace vulkan
-} // namespace page
+} // namespace dw

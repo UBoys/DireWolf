@@ -4,7 +4,7 @@
 #include <sstream>
 
 // TODO: fix namespaces
-namespace page::vulkan {
+namespace dw::vulkan {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // overloaded operator<<
@@ -56,4 +56,4 @@ std::string toString(const VkPhysicalDeviceProperties& properties)
     return os.str();
 }
 
-} // namespace page::vulkan
+} // namespace dw::vulkan

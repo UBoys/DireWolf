@@ -11,7 +11,7 @@ void testNonEngineIntergratedVulkan()
     std::vector<const char*> desiredVulkanExtensions = { "VK_KHR_surface" };
 
 #ifdef DW_VULKAN_ENABLED
-    page::vulkan::TempVulkanSetupObject vulkanInitObj(&desiredVulkanExtensions);
+    dw::vulkan::TempVulkanSetupObject vulkanInitObj(&desiredVulkanExtensions);
 
     if (vulkanInitObj.isValid()) {
         std::cout << "\nVulkan was successfully initialized\n\n";
@@ -25,9 +25,9 @@ void testNonEngineIntergratedVulkan()
 
 int main() {
     // Setup renderer
-    dwf::InitData initData { dwf::RendererType::RASTERIZER, dwf::BackendType::VULKAN };
-    dwf::PlatformData platformData = { nullptr };
-    auto engine = std::make_unique<dwf::RenderEngine>(platformData, initData);
+    // dwf::InitData initData { dwf::RendererType::RASTERIZER, dwf::BackendType::VULKAN };
+    // dwf::PlatformData platformData = { nullptr };
+    // auto engine = std::make_unique<dwf::RenderEngine>(platformData, initData);
 
     testNonEngineIntergratedVulkan();
 

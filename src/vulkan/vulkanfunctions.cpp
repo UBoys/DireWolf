@@ -1,6 +1,6 @@
 #include "vulkanfunctions.h"
 
-namespace page::vulkan {
+namespace dw::vulkan {
 
 #define EXPORTED_VULKAN_FUNCTION( name ) PFN_##name name;
 #define GLOBAL_LEVEL_VULKAN_FUNCTION( name ) PFN_##name name;
@@ -11,4 +11,4 @@ namespace page::vulkan {
 
 #include "listofvulkanfunctions.inl"
 
-} // namespace page::vulkan
+} // namespace dw::vulkan

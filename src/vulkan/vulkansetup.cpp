@@ -6,14 +6,35 @@
 #include <iostream>
 #include <string>
 
-namespace page::vulkan {
+#if defined(__APPLE__) || defined(__linux)
+#include <dlfcn.h>
+#endif
+
+#if defined (_WIN32)
+constexpr char* const VK_LIB_NAME = "vulkan-1.dll";
+#elif defined (__APPLE__)
+constexpr char *const VK_LIB_NAME = "libvulkan.1.dylib";
+#elif defined (__linux)
+constexpr char* const VK_LIB_NAME = "libvulkan.1.so";
+#else
+#error "The DireWolf renderer is not yet setup for Vulkan on this platform. Supported operating systems are Linux and Windows";
+#endif
+
+namespace {
+#if defined(_WIN32)
+HMODULE s_vulkan_library;
+#else
+void *s_vulkan_library;
+#endif
+}
+
+namespace dw::vulkan {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // TODO: should probably take some init-struct
 TempVulkanSetupObject::TempVulkanSetupObject(std::vector<const char*>* desiredExtensions /* = nullptr */)
 : m_isValid(false)
-, m_vulkanRTLFound(false)
 , m_instance(VK_NULL_HANDLE)
 {
 #if defined( DW_VERBOSE_LOG_VK )
@@ -64,17 +85,13 @@ bool TempVulkanSetupObject::initialize(std::vector<const char*>* desiredExtensio
 
 bool TempVulkanSetupObject::initLibs()
 {
-#if defined( _WIN32 )
-    vulkan_library = LoadLibrary("vulkan-1.dll");
-#elif defined( __linux )
-    vulkan_library = dlopen("libvulkan.so.1", RTLD_NOW);
+#if defined (_WIN32)
+    s_vulkan_library = LoadLibrary(VK_LIB_NAME);
 #else
-    std::cerr << "The PAGE renderer is not yet setup for Vulkan on this platform. Supported operating systems are Linux and Windows" << std::endl;
-    vulkan_library = nullptr;
+    s_vulkan_library = dlopen(VK_LIB_NAME, RTLD_NOW | RTLD_LOCAL);
 #endif
-    if (!vulkan_library) {
+    if (!s_vulkan_library) {
         std::cerr << "Could not connect with a Vulkan Runtime library.\n";
-        m_vulkanRTLFound = false;
         return false;
     }
 
@@ -82,7 +99,6 @@ bool TempVulkanSetupObject::initLibs()
     std::cout << "\tSuccessfully connected with a Vulkan Runtime library.\n";
 #endif
 
-    m_vulkanRTLFound = true;
     return true;
 }
 
@@ -99,14 +115,16 @@ bool TempVulkanSetupObject::initProcAddr()
 #endif // VK_NO_PROTOTYPES
 #endif // DW_VERBOSE_LOG_VK
 
-#if defined( _WIN32 )
+#if defined (_WIN32)
 #define LoadFunction GetProcAddress
-#elif defined __linux
+#elif defined (__linux)
+#define LoadFunction dlsym
+#elif defined (__APPLE__)
 #define LoadFunction dlsym
 #endif
 
 #define EXPORTED_VULKAN_FUNCTION( name )                              \
-    name = (PFN_##name)LoadFunction( vulkan_library, #name );         \
+    name = (PFN_##name)LoadFunction( s_vulkan_library, #name );         \
     if ( name == nullptr ) {                                          \
         std::cerr << "Could not load exported Vulkan function named: "\
             #name << std::endl;                                       \
@@ -179,7 +197,7 @@ bool TempVulkanSetupObject::loadInstanceLevelFunctionsFromExtensions(const std::
 // TODO: this needs refactoring
 bool TempVulkanSetupObject::getAvailableInstanceExtensions(std::vector<VkExtensionProperties>& outAvailableExtensions) const
 {
-    if (!m_vulkanRTLFound) {
+    if (!s_vulkan_library) {
         return false;
     }
 
@@ -218,6 +236,7 @@ bool TempVulkanSetupObject::createVulkanInstance(std::vector<const char*>* desir
 {
     std::vector<VkExtensionProperties> availableExtensions;
     if (!getAvailableInstanceExtensions(availableExtensions)) {
+        std::cerr << "Could not get available instance extensions!" << std::endl;
         return false;
     }
 
@@ -353,4 +372,4 @@ bool TempVulkanSetupObject::getPhysicalDeviceExtensions(const VkPhysicalDevice& 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-} // namespace page::vulkan
+} // namespace dw::vulkan
