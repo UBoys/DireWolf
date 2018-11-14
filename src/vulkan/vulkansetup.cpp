@@ -78,7 +78,7 @@ bool TempVulkanSetupObject::initialize(std::vector<const char*>* desiredExtensio
         }
     }
 
-    return true;
+    return true; 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

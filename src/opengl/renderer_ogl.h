@@ -23,7 +23,7 @@ public:
 
     virtual void* MapVertexBuffer(const GfxObject& handle) override;
     virtual void* MapIndexBuffer(const GfxObject& handle) override { return nullptr; };
-    virtual void UnmapVertexBuffer(const GfxObject& handle, const uint32_t count = 0) override;
+    virtual void UnmapVertexBuffer(const GfxObject& handle) override;
     virtual void UnmapIndexBuffer(const GfxObject& handle, const uint32_t count) override {};
 
     virtual void DestroyVertexBuffer(const GfxObject& handle) override {};

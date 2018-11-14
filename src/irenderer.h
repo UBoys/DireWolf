@@ -10,7 +10,6 @@ enum RenderCommandType {
 	BindIndexBufferCommand,
     BindTexturesCommand,
     BindSamplersCommand,
-    DrawIndexedCommand,
 	DrawCommand
 };
 
@@ -19,7 +18,7 @@ enum RenderCommandType {
 struct GfxObject {
 	GfxObject() : id(0) {}
 	explicit GfxObject(uint32_t id) : id(id) {}
-	
+
 	bool operator==(const GfxObject& rhs) const {
 		return id == rhs.id;
 	}
@@ -82,7 +81,7 @@ public:
 
     virtual void* MapVertexBuffer(const GfxObject& handle) = 0;
     virtual void* MapIndexBuffer(const GfxObject& handle) = 0;
-    virtual void UnmapVertexBuffer(const GfxObject& handle, const uint32_t count) = 0;
+    virtual void UnmapVertexBuffer(const GfxObject& handle) = 0;
     virtual void UnmapIndexBuffer(const GfxObject& handle, const uint32_t count) = 0;
 
     virtual void DestroyVertexBuffer(const GfxObject& handle) = 0;
