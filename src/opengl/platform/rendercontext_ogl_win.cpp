@@ -104,6 +104,10 @@ RenderContextWin::RenderContextWin(const PlatformData& platformData) {
     std::cout << "DireWolf: Running OpenGL version " << versionString << std::endl;
 }
 
+void RenderContextWin::SwapBuffers() const {
+	::SwapBuffers(m_deviceContext);
+}
+
 }  // namespace dw
 
 #endif
