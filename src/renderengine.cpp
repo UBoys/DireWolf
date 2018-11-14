@@ -19,6 +19,18 @@ RenderEngine::RenderEngine(const PlatformData& platformData, const InitData& ini
     }
 }
 
+bool RenderEngine::CreateVertexBuffer(const GfxObject& object, uint32_t count) const {
+	return m_renderer->CreateVertexBuffer(object, count);
+}
+
+bool RenderEngine::CreatePipelineState(const GfxObject& object, const PipelineState& pipelineState) const {
+	return m_renderer->CreatePipelineState(object, pipelineState);
+}
+
+void RenderEngine::Render(const std::vector<RenderCommand>& commandBuffer) const {
+	return m_renderer->Render(commandBuffer);
+}
+
 void RenderEngine::_SetupRasterizer(const PlatformData& platformData, const BackendType& type) {
     std::cout << "DireWolf: Initializing render library!\n";
     RendererCaps caps = {};

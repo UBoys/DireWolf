@@ -4,13 +4,55 @@
 
 namespace dw {
 
-enum RenderCommand {
-    SetPipelineState,
-    SetVertexBuffer,
-    SetIndexBuffer,
-    SetTextures,
-    SetSamplers,
-    DrawIndexed
+enum RenderCommandType {
+    BindPipelineStateCommand,
+    BindVertexBufferCommand,
+	BindIndexBufferCommand,
+    BindTexturesCommand,
+    BindSamplersCommand,
+    DrawIndexedCommand,
+	DrawCommand
+};
+
+// Handle for each renderer resource.
+// All rendering resources are owned by the renderer and should not be coupled with client code
+struct GfxObject {
+	GfxObject() : id(0) {}
+	explicit GfxObject(uint32_t id) : id(id) {}
+	
+	bool operator==(const GfxObject& rhs) const {
+		return id == rhs.id;
+	}
+	bool operator<(const GfxObject& rhs) const {
+		return id < rhs.id;
+	}
+	bool operator!=(const GfxObject rhs) const {
+		return id != rhs.id;
+	}
+
+    bool IsValid() const { return id != 0; }
+    uint32_t id;
+};
+
+// Generic render command
+struct RenderCommand {
+	RenderCommandType type;
+	void* data;
+};
+
+// Data associated with commands
+struct BindVertexBufferCommandData {
+	GfxObject* object;
+};
+
+struct BindPipelineStateCommandData {
+	GfxObject* object;
+};
+
+struct DrawCommandData {
+	uint32_t count;
+	uint32_t startVertex;
+	// TODO: Topology
 };
 
 struct RendererCaps {
@@ -26,24 +68,17 @@ struct SamplerDescription {};
 struct PipelineState {};
 // TODO: Constant buffers
 
-// Handle for each renderer resource.
-// All rendering resources are owned by the renderer and should not be coupled with client code
-struct GfxObject {
-    bool IsValid() const { return objectId != 0; }
-    uint32_t objectId = 0;
-};
-
 class IRenderer {
 public:
     virtual ~IRenderer() = default;
 
     virtual void Initialize(const RendererCaps& caps, const PlatformData& platformData) = 0;
 
-    virtual GfxObject CreateVertexBuffer(const uint32_t count) = 0;
-    virtual GfxObject CreateIndexBuffer(const uint32_t count) = 0;
-    virtual GfxObject CreatePipelineState(const PipelineState& state) = 0;
-    virtual GfxObject CreateTexture(const TextureDescription& description, const std::vector<void*>& data) = 0;
-    virtual GfxObject CreateSamplerState(const SamplerDescription& description) = 0;
+    virtual bool CreateVertexBuffer(const GfxObject& object, uint32_t count) = 0;
+    virtual bool CreateIndexBuffer(const GfxObject& object, uint32_t count) = 0;
+    virtual bool CreatePipelineState(const GfxObject& object, const PipelineState& state) = 0;
+    virtual bool CreateTexture(const GfxObject& object, const TextureDescription& description, const std::vector<void*>& data) = 0;
+    virtual bool CreateSamplerState(const GfxObject& object, const SamplerDescription& description) = 0;
 
     virtual void* MapVertexBuffer(const GfxObject& handle) = 0;
     virtual void* MapIndexBuffer(const GfxObject& handle) = 0;

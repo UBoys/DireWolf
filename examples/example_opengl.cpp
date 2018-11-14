@@ -50,6 +50,24 @@ int main() {
     dw::PlatformData platformData = { _GetGlfwNativeWindowhandle(window) };
     auto renderEngine = std::make_unique<dw::RenderEngine>(platformData, initData);
 
+	//dw::GfxHandle vertexBufferHandle = renderEngine->CreateVertexBuffer(3);
+	//void* vertexBufferData = renderEngine->MapVertexBuffer(vertexBufferHandle);
+	//vertexBufferData[0] = 1.0;
+	//renderEngine->DestroyVertexBuffer(vertexBufferHandle);
+	// vertexBufferHandle is still valid but does not exist int the backend..
+
+	// This approach for sure. Client always creates the handles
+	//dw::GfxHandle vertexBufferHandle;
+	//renderEngine->CreateVertexBuffer(vertexBufferHandle, 3);
+	//void* vertexBufferData = renderEngine->MapVertexBuffer(vertexBufferHandle);
+	//vertexBufferData[0] = 1.0;
+	//renderEngine->DestroyVertexBuffer(vertexBufferHandle);
+	// vertexBufferHandle is still valid id.. but does not exist in the backend
+
+	
+
+
+
     std::cout << "\n\nPress enter to EXIT";
     std::cin.get();
 
