@@ -36,13 +36,13 @@ public:
     virtual void Render(const std::vector<RenderCommand>& commandBuffer) override;
 
 private:
-	// These functions do not need to be exposed
-	void BindVertexBuffer(BindVertexBufferCommandData* data);
-	void BindPipelineState(BindPipelineStateCommandData* data);
-	void Draw(DrawCommandData* data);
+    // These functions do not need to be exposed
+    void BindVertexBuffer(BindVertexBufferCommandData* data);
+    void BindPipelineState(BindPipelineStateCommandData* data);
+    void Draw(DrawCommandData* data);
 
-	std::map<GfxObject, GLuint> m_vertexBuffers;
-	std::unique_ptr<IRenderContextOGL> m_renderContext;
+    std::map<GfxObject, GLuint> m_vertexBuffers;
+    std::unique_ptr<IRenderContextOGL> m_renderContext;
 };
 
 }  // namespace dw

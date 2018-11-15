@@ -7,27 +7,27 @@ namespace dw {
 enum RenderCommandType {
     BindPipelineStateCommand,
     BindVertexBufferCommand,
-	BindIndexBufferCommand,
+    BindIndexBufferCommand,
     BindTexturesCommand,
     BindSamplersCommand,
-	DrawCommand
+    DrawCommand
 };
 
 // Handle for each renderer resource.
 // All rendering resources are owned by the renderer and should not be coupled with client code
 struct GfxObject {
-	GfxObject() : id(0) {}
-	explicit GfxObject(uint32_t id) : id(id) {}
+    GfxObject() : id(0) {}
+    explicit GfxObject(uint32_t id) : id(id) {}
 
-	bool operator==(const GfxObject& rhs) const {
-		return id == rhs.id;
-	}
-	bool operator<(const GfxObject& rhs) const {
-		return id < rhs.id;
-	}
-	bool operator!=(const GfxObject rhs) const {
-		return id != rhs.id;
-	}
+    bool operator==(const GfxObject& rhs) const {
+        return id == rhs.id;
+    }
+    bool operator<(const GfxObject& rhs) const {
+        return id < rhs.id;
+    }
+    bool operator!=(const GfxObject rhs) const {
+        return id != rhs.id;
+    }
 
     bool IsValid() const { return id != 0; }
     uint32_t id;
@@ -35,23 +35,23 @@ struct GfxObject {
 
 // Generic render command
 struct RenderCommand {
-	RenderCommandType type;
-	void* data;
+    RenderCommandType type;
+    void* data;
 };
 
 // Data associated with commands
 struct BindVertexBufferCommandData {
-	GfxObject* object;
+    GfxObject* object;
 };
 
 struct BindPipelineStateCommandData {
-	GfxObject* object;
+    GfxObject* object;
 };
 
 struct DrawCommandData {
-	uint32_t count;
-	uint32_t startVertex;
-	// TODO: Topology
+    uint32_t count;
+    uint32_t startVertex;
+    // TODO: Topology
 };
 
 struct RendererCaps {

@@ -16,7 +16,7 @@
 
 namespace {
     GLuint s_HARDCODED_PROGRAM_REMOVE_ME; // TODO: Remove
-	const uint32_t HARDCODED_VERTEX_ELEMENT_SIZE = sizeof(float) * 4; // TODO: Remove
+    const uint32_t HARDCODED_VERTEX_ELEMENT_SIZE = sizeof(float) * 4; // TODO: Remove
 }
 
 namespace dw {
@@ -30,11 +30,11 @@ void RendererOGL::Initialize(const RendererCaps& caps, const PlatformData& platf
 #endif
 
     // Load all static resources
-	s_HARDCODED_PROGRAM_REMOVE_ME = opengl::utils::LoadShader("../../src/opengl/shaders/standard.vertex", "../../src/opengl/shaders/standard.fragment");
+    s_HARDCODED_PROGRAM_REMOVE_ME = opengl::utils::LoadShader("../../src/opengl/shaders/standard.vertex", "../../src/opengl/shaders/standard.fragment");
     glClearColor(0.0f, 1.0f, 0.0f, 1.0f); // Display ugly green color
 
-	// TODO: Part of creating the pipeline state
-	glUseProgram(s_HARDCODED_PROGRAM_REMOVE_ME);
+    // TODO: Part of creating the pipeline state
+    glUseProgram(s_HARDCODED_PROGRAM_REMOVE_ME);
 }
 
 // TODO: Pass in what desired layout in this function t.ex float4/pos, float4/color, float4/somethingelse. Right now assume float4 positions
@@ -67,7 +67,7 @@ void* RendererOGL::MapVertexBuffer(const GfxObject& object) {
     const auto vertexBufferIt = m_vertexBuffers.find(object);
     assert(vertexBufferIt != m_vertexBuffers.end() && "Failed to find requested vertex buffer");
     glBindBuffer(GL_ARRAY_BUFFER, vertexBufferIt->second);
-	/*TODO: Remove hardcoded count*/
+    /*TODO: Remove hardcoded count*/
     void* result = glMapBufferRange(GL_ARRAY_BUFFER, 0, HARDCODED_VERTEX_ELEMENT_SIZE * 3, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
     return result;
 }
@@ -89,12 +89,12 @@ void RendererOGL::BindVertexBuffer(BindVertexBufferCommandData* data) {
 }
 
 bool RendererOGL::CreatePipelineState(const GfxObject& object, const PipelineState& pipelineState) {
-	// TODO: Create program state here which includes the shader
+    // TODO: Create program state here which includes the shader
     return false;
 }
 
 void RendererOGL::Draw(DrawCommandData* data) {
-	glDrawArrays(GL_TRIANGLES, data->startVertex, data->count);
+    glDrawArrays(GL_TRIANGLES, data->startVertex, data->count);
 }
 
 void RendererOGL::BindPipelineState(BindPipelineStateCommandData* data) {
@@ -104,7 +104,7 @@ void RendererOGL::BindPipelineState(BindPipelineStateCommandData* data) {
 }
 
 void RendererOGL::Render(const std::vector<RenderCommand>& commandBuffer) {
-	glClear(GL_COLOR_BUFFER_BIT); // TODO: Separate clear command?
+    glClear(GL_COLOR_BUFFER_BIT); // TODO: Separate clear command?
     for (RenderCommand command : commandBuffer) {
         switch (command.type) {
             case BindVertexBufferCommand:
@@ -120,7 +120,7 @@ void RendererOGL::Render(const std::vector<RenderCommand>& commandBuffer) {
                 std::cerr << "Unsupported rendering command!" << std::endl;
         }
     }
-	m_renderContext->SwapBuffers();
+    m_renderContext->SwapBuffers();
 }
 
 }  // namespace dw

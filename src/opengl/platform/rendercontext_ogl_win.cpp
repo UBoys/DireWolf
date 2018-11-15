@@ -16,7 +16,7 @@ namespace {
 
 namespace dw {
 
-// GLOBAL CLASS TODO: This looks like a mess 
+// TODO: Clean this up, the class looks like a mess
 RenderContextWin::RenderContextWin(const PlatformData& platformData) {
     int errorCode;
     HWND hwndFake = CreateWindowA("STATIC", "", WS_POPUP | WS_DISABLED, -32000, -32000, 0,

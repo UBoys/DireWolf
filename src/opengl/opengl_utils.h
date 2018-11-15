@@ -1,4 +1,4 @@
-// TODO: Remove this file
+// TODO: Remove this file, quite temporary to move out a lot of the mess
 #include <GL/glew.h>
 #include <string>
 #include <fstream>
