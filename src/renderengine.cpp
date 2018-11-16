@@ -4,7 +4,7 @@
 // TODO: Build definitions should decide what we include and build
 #include "opengl/renderer_ogl.h"
 
-namespace dwf {
+namespace dw {
 
 RenderEngine::RenderEngine(const PlatformData& platformData, const InitData& initData){
     switch(initData.rendererType) {
@@ -17,6 +17,26 @@ RenderEngine::RenderEngine(const PlatformData& platformData, const InitData& ini
         default:
             std::cerr << "Unknown renderer type\n";
     }
+}
+
+bool RenderEngine::CreateVertexBuffer(const GfxObject& object, uint32_t count) const {
+	return m_renderer->CreateVertexBuffer(object, count);
+}
+
+void* RenderEngine::MapVertexBuffer(const GfxObject& object) {
+	return m_renderer->MapVertexBuffer(object);
+}
+
+void RenderEngine::UnmapVertexBuffer(const GfxObject& object) {
+    m_renderer->UnmapVertexBuffer(object);
+}
+
+bool RenderEngine::CreatePipelineState(const GfxObject& object, const PipelineState& pipelineState) const {
+	return m_renderer->CreatePipelineState(object, pipelineState);
+}
+
+void RenderEngine::Render(const std::vector<RenderCommand>& commandBuffer) const {
+	return m_renderer->Render(commandBuffer);
 }
 
 void RenderEngine::_SetupRasterizer(const PlatformData& platformData, const BackendType& type) {
@@ -36,4 +56,4 @@ void RenderEngine::_SetupRasterizer(const PlatformData& platformData, const Back
     }
 }
 
-}  // namespace pgfx
+}  // namespace dw
