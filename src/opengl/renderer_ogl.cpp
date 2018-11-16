@@ -56,7 +56,7 @@ bool RendererOGL::CreateVertexBuffer(const GfxObject& object, uint32_t count) {
 
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    glVertexAttribPointer(0, HARDCODED_VERTEX_ELEMENT_SIZE, GL_FLOAT, GL_FALSE, elementSize, static_cast<void*>(0));
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, elementSize, static_cast<void*>(0));
 
     m_vertexBuffers.emplace(object, vertexBuffer); // TODO: Store other state here such as vao, count, base vertex, etc 
     return true;
