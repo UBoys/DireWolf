@@ -17,9 +17,8 @@ public:
     virtual bool CreateVertexBuffer(const GfxObject& object, uint32_t count) override;
     virtual bool CreateIndexBuffer(const GfxObject& object, uint32_t count) override { return false; }
     virtual bool CreatePipelineState(const GfxObject& object, const PipelineState& state) override;
-    virtual bool CreateTexture(const GfxObject& object, const TextureDescription& description,
-                                    const std::vector<void*>& data) override { return false; }
     virtual bool CreateSamplerState(const GfxObject& object, const SamplerDescription& description) override { return false; }
+    virtual bool CreateTexture(const GfxObject& object, const TextureDescription& description, const std::vector<void*>& data) override { return false; }
 
     virtual void* MapVertexBuffer(const GfxObject& handle) override;
     virtual void* MapIndexBuffer(const GfxObject& handle) override { return nullptr; };

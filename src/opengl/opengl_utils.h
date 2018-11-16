@@ -6,6 +6,7 @@
 #include <vector>
 
 namespace dw::opengl::utils {
+
     std::string ReadFile(const char *filePath) {
         std::string content;
         std::ifstream fileStream(filePath, std::ios::in);
@@ -79,4 +80,5 @@ namespace dw::opengl::utils {
 
         return program;
     }
-}
+
+} // namespace dw::opengl::utils

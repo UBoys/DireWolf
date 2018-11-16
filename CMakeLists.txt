@@ -12,7 +12,7 @@ else(MSVC)
 endif(MSVC)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
-option(DIREWOLF_BUILD_EXAMPLES "Should the examples folder be added?" ON)
+option(DIREWOLF_BUILD_EXAMPLES "Should the examples folder be added?" OFF) # HACK/TODO: Don't want to add GLFW dep to travis. Do we want to build samples by default?
 option(DIREWOLF_USE_VERBOSE_VULKAN_LOG "Should the Direwolf Vulkan module print verbose info messages?" ON)
 option(DIREWOLF_VULKAN_ENABLED "Should we include vulkan features?" OFF)
 option(DIREWOLF_OPENGL_ENABLED "Should we include OpenGL features?" ON)
@@ -48,8 +48,8 @@ if (DIREWOLF_OPENGL_ENABLED)
       ${CMAKE_CURRENT_SOURCE_DIR}/ext/glew-cmake/include
       ${CMAKE_CURRENT_SOURCE_DIR}/ext/glew-cmake/src)
 
-  target_sources(direwolf 
-    PRIVATE 
+  target_sources(direwolf
+    PRIVATE
       src/opengl/renderer_ogl.cpp
       src/opengl/irendercontext_ogl.h
       src/opengl/platform/rendercontext_ogl_win.cpp

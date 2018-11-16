@@ -8,4 +8,4 @@ public:
     virtual void SwapBuffers() const = 0;
 };
 
-}
+} // namespace dw

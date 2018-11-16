@@ -105,7 +105,7 @@ void RendererOGL::BindPipelineState(BindPipelineStateCommandData* data) {
 
 void RendererOGL::Render(const std::vector<RenderCommand>& commandBuffer) {
     glClear(GL_COLOR_BUFFER_BIT); // TODO: Separate clear command?
-    for (RenderCommand command : commandBuffer) {
+    for (const RenderCommand& command : commandBuffer) {
         switch (command.type) {
             case BindVertexBufferCommand:
                 BindVertexBuffer(static_cast<BindVertexBufferCommandData*>(command.data));

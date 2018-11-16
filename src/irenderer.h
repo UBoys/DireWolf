@@ -19,15 +19,9 @@ struct GfxObject {
     GfxObject() : id(0) {}
     explicit GfxObject(uint32_t id) : id(id) {}
 
-    bool operator==(const GfxObject& rhs) const {
-        return id == rhs.id;
-    }
-    bool operator<(const GfxObject& rhs) const {
-        return id < rhs.id;
-    }
-    bool operator!=(const GfxObject rhs) const {
-        return id != rhs.id;
-    }
+    bool operator==(const GfxObject& rhs) const { return id == rhs.id; }
+    bool operator<(const GfxObject& rhs) const { return id < rhs.id; }
+    bool operator!=(const GfxObject& rhs) const { return id != rhs.id; }
 
     bool IsValid() const { return id != 0; }
     uint32_t id;
