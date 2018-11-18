@@ -185,4 +185,44 @@ bool IsExtensionSupported(const char* extension, const std::vector<VkExtensionPr
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+std::vector<VkQueueFamilyProperties> GetQueueProperties(const VkPhysicalDevice& device)
+{
+    uint32_t numQueueFamilies = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &numQueueFamilies, nullptr);
+    if (numQueueFamilies == 0) {
+        std::cerr << "ERROR: Couldn't get number of queue families!" << std::endl;
+        return std::vector<VkQueueFamilyProperties>();
+    }
+
+    std::vector<VkQueueFamilyProperties> queueFamilyProperties;
+    queueFamilyProperties.resize(numQueueFamilies);
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &numQueueFamilies, queueFamilyProperties.data());
+    if (numQueueFamilies == 0) {
+        std::cerr << "ERROR: Couldn't get properties of the queue families!" << std::endl;
+        return std::vector<VkQueueFamilyProperties>();
+    }
+
+    return queueFamilyProperties;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/** Finds first element in @param queueFamilies which fullfills all requirements in @param desiredFlags and sets @param outIndex to the corresponding index.
+ *  @param outIndex remains unchanged if no queue fullfills the requirements
+ *  returns false if no match is found.
+ */
+bool GetSupportingQueueIndex(const std::vector<VkQueueFamilyProperties>& queueFamilies, const VkQueueFlags desiredFlags, uint32_t& outIndex)
+{
+    for (uint32_t index = 0; index < static_cast<uint32_t>(queueFamilies.size()); ++index) {
+        if ((queueFamilies[index].queueCount > 0) && (queueFamilies[index].queueFlags & desiredFlags) == desiredFlags) {
+            outIndex = index;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 } // namespace dw::vulkan

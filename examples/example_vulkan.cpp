@@ -2,6 +2,7 @@
 
 #if defined (DW_VULKAN_ENABLED)
 #include "direwolf/vulkan/vulkansetup.h"
+#include "vulkan/vulkanutils.h" // this is just for the log stuff.. TODO: put the log stuff in its own header
 #endif
 
 #include <iostream>
@@ -46,7 +47,30 @@ void testNonEngineIntergratedVulkan()
     std::vector<VkPhysicalDevice> physicalDevices = GetPhysicalDevices(vulkanInstance);
 
     for (const VkPhysicalDevice& device : physicalDevices) {
+        std::cout << "\n" << device << " info: \n";
         std::vector<VkExtensionProperties> deviceExtensions = GetPhysicalDeviceExtensions(device);
+        std::vector<VkQueueFamilyProperties> queueFamilies = GetQueueProperties(device);
+
+        // We should create a bitset VkQueueFlags which holds info about which features we require from a queueFamily.
+        // Available bits are: VK_QUEUE_GRAPHICS_BIT, VK_QUEUE_COMPUTE_BIT, VK_QUEUE_TRANSFER_BIT and VK_QUEUE_SPARSE_BINDING_BIT
+        const VkQueueFlags allFlags = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT | VK_QUEUE_SPARSE_BINDING_BIT;
+        const VkQueueFlags gfxAndComputeFlags = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT;
+        uint32_t allIndex;
+        uint32_t gfxAndComputeIndex;
+        bool isGfxAndComputePipelineSupported = GetSupportingQueueIndex(queueFamilies, gfxAndComputeFlags, gfxAndComputeIndex);
+        bool isEverythingSupported = GetSupportingQueueIndex(queueFamilies, allFlags, allIndex);
+
+        if (isEverythingSupported) {
+            std::cout << "\t'VkQueueFamilyProperties' at index " << allIndex << " supports all functionalities." << std::endl;
+        }
+
+        if (isGfxAndComputePipelineSupported) {
+            std::cout << "\t'VkQueueFamilyProperties' at index " << gfxAndComputeIndex << " supports all gfx and compute pipelines." << std::endl;
+        }
+
+        if (!isEverythingSupported && !isGfxAndComputePipelineSupported) {
+            std::cerr << "WARNING: None of the VkQueueFamilyProperties has the required functionalites." << std::endl;
+        }
     }
 #else
     std::cerr << "You're trying to run VULKAN features, but haven't enabled it. Set DW_VULKAN_ENABLED to true in CMAKE to enable it." << std::endl;

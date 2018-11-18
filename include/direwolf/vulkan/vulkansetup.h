@@ -61,6 +61,8 @@ std::vector<VkPhysicalDevice> GetPhysicalDevices(const VkInstance& instance);
 std::vector<VkExtensionProperties> GetPhysicalDeviceExtensions(const VkPhysicalDevice& device);
 VkPhysicalDeviceFeatures GetPhysicalDeviceFeatures(const VkPhysicalDevice& device);
 VkPhysicalDeviceProperties GetPhysicalDeviceProperties(const VkPhysicalDevice& device);
+std::vector<VkQueueFamilyProperties> GetQueueProperties(const VkPhysicalDevice& device);
+bool GetSupportingQueueIndex(const std::vector<VkQueueFamilyProperties>& queueFamilies, const VkQueueFlags desiredFlag, uint32_t& outIndex);
 bool IsExtensionSupported(const char* extension, const std::vector<VkExtensionProperties>& availableExtensions);
 
 } // namespace dw::vulkan
