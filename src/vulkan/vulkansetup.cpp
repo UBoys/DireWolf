@@ -132,7 +132,6 @@ std::vector<VkPhysicalDevice> GetPhysicalDevices(const VkInstance& instance)
 
 std::vector<VkExtensionProperties> GetPhysicalDeviceExtensions(const VkPhysicalDevice& device)
 {
-
     uint32_t numExtensions = 0;
     if (vkEnumerateDeviceExtensionProperties(device, nullptr, &numExtensions, nullptr) != VK_SUCCESS || numExtensions == 0) {
         std::cerr << "Could not get the number of physical device extensions." << std::endl;
@@ -207,20 +206,38 @@ std::vector<VkQueueFamilyProperties> GetQueueProperties(const VkPhysicalDevice& 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+bool IsQueueFamilySupportingFlags(const VkQueueFamilyProperties& queueFamily, const VkQueueFlags flagsToCheck)
+{
+    if (queueFamily.queueCount > 0 && (queueFamily.queueFlags & flagsToCheck) == flagsToCheck) {
+        return true;
+    }
+    return false;
+}
+
 /** Finds first element in @param queueFamilies which fullfills all requirements in @param desiredFlags and sets @param outIndex to the corresponding index.
  *  @param outIndex remains unchanged if no queue fullfills the requirements
  *  returns false if no match is found.
  */
 bool GetSupportingQueueIndex(const std::vector<VkQueueFamilyProperties>& queueFamilies, const VkQueueFlags desiredFlags, uint32_t& outIndex)
 {
-    for (uint32_t index = 0; index < static_cast<uint32_t>(queueFamilies.size()); ++index) {
-        if ((queueFamilies[index].queueCount > 0) && (queueFamilies[index].queueFlags & desiredFlags) == desiredFlags) {
-            outIndex = index;
+    for (uint32_t i = 0; i < static_cast<uint32_t>(queueFamilies.size()); ++i) {
+        if (IsQueueFamilySupportingFlags(queueFamilies[i], desiredFlags)) {
+            outIndex = i;
             return true;
         }
     }
 
     return false;
+}
+
+VkDevice CreateLogicalDevice(const VkPhysicalDevice& physicalDevice, const VkDeviceCreateInfo& deviceCreateInfo)
+{
+    VkDevice logicalDevice;
+    if (vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &logicalDevice) != VK_SUCCESS || logicalDevice == VK_NULL_HANDLE) {
+        std::cerr << "ERROR: Failed to create logical device" << std::endl;
+        return VK_NULL_HANDLE;
+    }
+    return logicalDevice;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

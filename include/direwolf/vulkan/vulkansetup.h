@@ -54,6 +54,12 @@ struct VulkanInstanceInitData {
     // TODO: Extend this with more options?
 };
 
+struct QueueInfo {
+    uint32_t familyIndex;
+    std::vector<float> priorities;
+};
+
+
 bool InitializeVulkan();
 VkInstance CreateVulkanInstance(const VulkanInstanceInitData& initData);
 std::vector<VkExtensionProperties> GetAvailableInstanceExtensions();
@@ -63,6 +69,9 @@ VkPhysicalDeviceFeatures GetPhysicalDeviceFeatures(const VkPhysicalDevice& devic
 VkPhysicalDeviceProperties GetPhysicalDeviceProperties(const VkPhysicalDevice& device);
 std::vector<VkQueueFamilyProperties> GetQueueProperties(const VkPhysicalDevice& device);
 bool GetSupportingQueueIndex(const std::vector<VkQueueFamilyProperties>& queueFamilies, const VkQueueFlags desiredFlag, uint32_t& outIndex);
+bool IsQueueFamilySupportingFlags(const VkQueueFamilyProperties& queueFamily, const VkQueueFlags flagsToCheck);
 bool IsExtensionSupported(const char* extension, const std::vector<VkExtensionProperties>& availableExtensions);
+VkDevice CreateLogicalDevice(const VkPhysicalDevice& physicalDevice, const VkDeviceCreateInfo& deviceCreateInfo);
+
 
 } // namespace dw::vulkan
