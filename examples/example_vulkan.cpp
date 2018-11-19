@@ -146,7 +146,7 @@ void testNonEngineIntergratedVulkan()
         if (isEverythingSupported) {
             std::cout << "\t'VkQueueFamilyProperties' at index " << allIndex << " supports all functionalities." << std::endl;
             queueInfos.push_back(QueueInfo({ gfxIndex }));
-            for (int i = 0; i < queueFamilies[gfxIndex].queueCount; ++i) {
+            for (uint32_t i = 0; i < queueFamilies[gfxIndex].queueCount; ++i) {
                 queueInfos[0].priorities.push_back(1.0f);
             }
             selectedDevice = device;
@@ -156,7 +156,7 @@ void testNonEngineIntergratedVulkan()
         if (isGfxPipelineSupported) {
             std::cout << "\t'VkQueueFamilyProperties' at index " << gfxIndex << " supports praphics pipelines." << std::endl;
             queueInfos.push_back(QueueInfo({ gfxIndex }));
-            for (int i = 0; i < queueFamilies[gfxIndex].queueCount; ++i) {
+            for (uint32_t i = 0; i < queueFamilies[gfxIndex].queueCount; ++i) {
                 queueInfos[0].priorities.push_back(1.0f);
             }
             selectedDevice = device;
@@ -200,6 +200,8 @@ void testNonEngineIntergratedVulkan()
     deviceCreateInfo.ppEnabledExtensionNames = desiredDeviceExtensions.size() > 0 ? &desiredDeviceExtensions[0] : nullptr;
     VkPhysicalDeviceFeatures desiredFeatures = GetPhysicalDeviceFeatures(selectedDevice); // TODO: This shouldn't be all.. should only be desired ones
     deviceCreateInfo.pEnabledFeatures = &desiredFeatures;
+    // TODO: this approach could be used.. resets every member to 0 and sets the desired one to 1
+    // if( !device_features.geometryShader ) { continue; } else { device_features = {}; device_features.geometryShader = VK_TRUE; }
 
     VkDevice logicalDevice = CreateLogicalDevice(selectedDevice, deviceCreateInfo);
     if (logicalDevice == VK_NULL_HANDLE) {

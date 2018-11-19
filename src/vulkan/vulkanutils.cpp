@@ -138,6 +138,42 @@ bool IsExtensionSupportedImpl(const char* extension, const std::vector<VkExtensi
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool LoadDeviceLevelFunctions(const VkDevice& logicalDevice)
+{
+#define DEVICE_LEVEL_VULKAN_FUNCTION( name )                                                    \
+    name = (PFN_##name)vkGetDeviceProcAddr( logicalDevice, #name );                             \
+    if( name == nullptr ) {                                                                     \
+        std::cout << "Could not load device-level Vulkan function named: " #name << std::endl;  \
+        return false;                                                                           \
+    }
+
+#include "listofvulkanfunctions.inl"
+
+    return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+// TODO: Not tested yet
+bool LoadDeviceLevelFunctionsFromExtensions(const VkDevice& logicalDevice, const std::vector<char const *>& enabledExtensions)
+{
+#define DEVICE_LEVEL_VULKAN_FUNCTION_FROM_EXTENSION( name, extension )                                  \
+    for (const char* enabledExtension : enabledExtensions) {                                            \
+        if (std::string(enabledExtension) == std::string(extension)) {                                  \
+            name = (PFN_##name)vkGetDeviceProcAddr(logicalDevice, #name);                               \
+            if (name == nullptr) {                                                                      \
+                std::cerr << "Could not load device-level Vulkan function named: " #name << std::endl;  \
+                return false;                                                                           \
+            }                                                                                           \
+        }                                                                                               \
+    }
+
+#include "listofvulkanfunctions.inl"
+    return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // overloaded operator<<
 std::ostream& operator<<(std::ostream& os, const VkPhysicalDeviceType& deviceType)
 {

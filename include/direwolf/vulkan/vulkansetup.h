@@ -73,5 +73,4 @@ bool IsQueueFamilySupportingFlags(const VkQueueFamilyProperties& queueFamily, co
 bool IsExtensionSupported(const char* extension, const std::vector<VkExtensionProperties>& availableExtensions);
 VkDevice CreateLogicalDevice(const VkPhysicalDevice& physicalDevice, const VkDeviceCreateInfo& deviceCreateInfo);
 
-
 } // namespace dw::vulkan

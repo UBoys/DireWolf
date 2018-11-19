@@ -237,6 +237,12 @@ VkDevice CreateLogicalDevice(const VkPhysicalDevice& physicalDevice, const VkDev
         std::cerr << "ERROR: Failed to create logical device" << std::endl;
         return VK_NULL_HANDLE;
     }
+
+    // TODO: might not be nice to do this here........... move elsewhere?
+    if (!LoadDeviceLevelFunctions(logicalDevice)) {
+        std::cerr << "WARNING: Could load device level functions!" << std::endl;
+    }
+
     return logicalDevice;
 }
 

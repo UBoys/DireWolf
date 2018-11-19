@@ -28,6 +28,8 @@ bool InitGlobalLevelFunction();
 bool LoadInstanceLevelFunctions(const VkInstance& instance);
 bool LoadInstanceLevelFunctionsFromExtensions(const VkInstance& instance, const std::vector<const char*>& enabledExtensions);
 bool IsExtensionSupportedImpl(const char* extension, const std::vector<VkExtensionProperties>& availableExtensions);
+bool LoadDeviceLevelFunctions(const VkDevice& device);
+bool LoadDeviceLevelFunctionsFromExtensions(const VkDevice& logicalDevice, const std::vector<char const *>& enabledExtensions);
 
 // TODO: prettyPrint should be moved to some other util, perhaps logUtils (remember the .inl file)
 
