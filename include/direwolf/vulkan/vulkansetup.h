@@ -36,13 +36,9 @@ Intended usage:
 #error "The DireWolf renderer is not yet setup for Vulkan on this platform. Supported operating systems are Linux, Windows and MacOS";
 #endif
 
-#include "vulkan/vulkan.h"
-
 #include <vector>
 
-#if defined _WIN32
-#include <windows.h>
-#endif // _WIN32
+#include "vulkancommons.h"
 
 namespace dw::vulkan {
 
@@ -60,7 +56,7 @@ struct QueueInfo {
 };
 
 
-bool InitializeVulkan();
+VulkanRTLPtr InitializeVulkan();
 VkInstance CreateVulkanInstance(const VulkanInstanceInitData& initData);
 std::vector<VkExtensionProperties> GetAvailableInstanceExtensions();
 std::vector<VkPhysicalDevice> GetPhysicalDevices(const VkInstance& instance);
@@ -72,5 +68,8 @@ bool GetSupportingQueueIndex(const std::vector<VkQueueFamilyProperties>& queueFa
 bool IsQueueFamilySupportingFlags(const VkQueueFamilyProperties& queueFamily, const VkQueueFlags flagsToCheck);
 bool IsExtensionSupported(const char* extension, const std::vector<VkExtensionProperties>& availableExtensions);
 VkDevice CreateLogicalDevice(const VkPhysicalDevice& physicalDevice, const VkDeviceCreateInfo& deviceCreateInfo);
+void DestroyLogicalDevice(VkDevice& logicalDevice);
+void DestroyInstance(VkInstance& instance);
+void ReleaseRuntimeLibrary(VulkanRTLPtr& vulkanRTL);
 
 } // namespace dw::vulkan

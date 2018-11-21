@@ -1,6 +1,7 @@
 #include "direwolf/vulkan/vulkansetup.h"
 
 #include "vulkanutils.h"
+#include "vulkanfunctions.h"
 
 #include <iostream>
 #include <string>
@@ -9,15 +10,15 @@ namespace dw::vulkan {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool InitializeVulkan()
+VulkanRTLPtr InitializeVulkan()
 {
     // Get run-time library and initialize global level functions
     VulkanRTLPtr vulkanRTL = GetRuntimeLibs();
     if (!vulkanRTL || !InitProcAddress(vulkanRTL) || !InitGlobalLevelFunction()) {
-        return false;
+        return nullptr;
     }
 
-    return true;
+    return vulkanRTL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -244,6 +245,31 @@ VkDevice CreateLogicalDevice(const VkPhysicalDevice& physicalDevice, const VkDev
     }
 
     return logicalDevice;
+}
+
+void DestroyLogicalDevice(VkDevice& logicalDevice)
+{
+    if (logicalDevice) {
+        vkDestroyDevice(logicalDevice, nullptr);
+        logicalDevice = VK_NULL_HANDLE;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void DestroyInstance(VkInstance& instance)
+{
+    if (instance) {
+        vkDestroyInstance(instance, nullptr);
+        instance = VK_NULL_HANDLE;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void ReleaseRuntimeLibrary(VulkanRTLPtr& vulkanRTL)
+{
+    FreeRuntimeLibrary(vulkanRTL);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
