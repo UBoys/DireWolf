@@ -30,7 +30,7 @@ public:
     virtual void DestroyIndexBuffer(const GfxObject& handle) override {};
     virtual void DestroyTexture(const GfxObject& handle) override {};
     virtual void DestroyPipelineState(const GfxObject& handle) override {};
-    virtual void DestroySamplerState(const GfxObject& hanele) override {};
+    virtual void DestroySamplerState(const GfxObject& handle) override {};
 
     // Actual rendering commands that operate on updated and ready resources.
     virtual void Render(const std::vector<RenderCommand>& commandBuffer) override;

@@ -209,10 +209,7 @@ std::vector<VkQueueFamilyProperties> GetQueueProperties(const VkPhysicalDevice& 
 
 bool IsQueueFamilySupportingFlags(const VkQueueFamilyProperties& queueFamily, const VkQueueFlags flagsToCheck)
 {
-    if (queueFamily.queueCount > 0 && (queueFamily.queueFlags & flagsToCheck) == flagsToCheck) {
-        return true;
-    }
-    return false;
+    return queueFamily.queueCount > 0 && (queueFamily.queueFlags & flagsToCheck) == flagsToCheck;
 }
 
 /** Finds first element in @param queueFamilies which fullfills all requirements in @param desiredFlags and sets @param outIndex to the corresponding index.

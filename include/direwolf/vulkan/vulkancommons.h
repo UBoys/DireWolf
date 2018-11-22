@@ -6,17 +6,15 @@
 #include <string>
 
 #if defined (_WIN32)
-#include <windows.h>
+  #include <windows.h>
 #endif // _WIN32
 
 namespace dw::vulkan {
 
 #if defined (_WIN32)
-typedef HMODULE VulkanRTLPtr;
+  typedef HMODULE VulkanRTLPtr;
 #elif defined (__linux) || defined (__APPLE__)
-typedef void* VulkanRTLPtr;
-#else
-typedef void* VulkanRTLPtr;
+  typedef void* VulkanRTLPtr;
 #endif
 
 std::ostream& operator<<(std::ostream& os, const VkPhysicalDeviceType& deviceType);

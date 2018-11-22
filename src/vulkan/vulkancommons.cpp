@@ -8,7 +8,7 @@
 namespace dw::vulkan {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// overloaded operator<<
+
 std::ostream& operator<<(std::ostream& os, const VkPhysicalDeviceType& deviceType)
 {
     switch (deviceType) {
@@ -37,7 +37,7 @@ std::ostream& operator<<(std::ostream& os, const VkPhysicalDeviceProperties& pro
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// overloaded toString functions
+
 std::string toString(const VkPhysicalDeviceType& deviceType)
 {
     std::ostringstream os;

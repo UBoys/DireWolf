@@ -14,7 +14,8 @@ void testNonEngineIntergratedVulkan()
 
     using namespace dw::vulkan;
 
-    if (InitializeVulkan()) {
+    VulkanRTLPtr vulkanRTL = InitializeVulkan();
+    if (vulkanRTL) {
         std::cout << "\tVulkan was successfully initialized" << std::endl;
     } else {
         std::cerr << "ERROR: Vulkan initialization failed!" << std::endl;
@@ -208,6 +209,15 @@ void testNonEngineIntergratedVulkan()
         std::cerr << "ERROR: Failed to create logical device" << std::endl;
         return;
     }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // When everything is done, we should close down everything properly.
+    // This should be done in reverse order
+    std::cout << "\n\nEverything succeeded!\n\nDestroying vulkan objects...\n" << std::endl;
+
+    DestroyLogicalDevice(logicalDevice);
+    DestroyInstance(vulkanInstance);
+    ReleaseRuntimeLibrary(vulkanRTL);
+
 #else
     std::cerr << "You're trying to run VULKAN features, but haven't enabled it. Set DW_VULKAN_ENABLED to true in CMAKE to enable it." << std::endl;
 #endif // DW_VULKAN_ENABLED
