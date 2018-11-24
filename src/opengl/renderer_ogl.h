@@ -3,6 +3,7 @@
 #include "irenderer.h"
 #include "opengl/irendercontext_ogl.h"
 #include <map>
+#include <memory>
 #include <GL/glew.h>
 
 namespace dw {

@@ -1,6 +1,7 @@
 #include "direwolf/vulkan/vulkansetup.h"
 
 #include "vulkanutils.h"
+#include "vulkanfunctions.h"
 
 #include <iostream>
 #include <string>
@@ -9,15 +10,15 @@ namespace dw::vulkan {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool InitializeVulkan()
+VulkanRTLPtr InitializeVulkan()
 {
     // Get run-time library and initialize global level functions
     VulkanRTLPtr vulkanRTL = GetRuntimeLibs();
     if (!vulkanRTL || !InitProcAddress(vulkanRTL) || !InitGlobalLevelFunction()) {
-        return false;
+        return nullptr;
     }
 
-    return true;
+    return vulkanRTL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -132,7 +133,6 @@ std::vector<VkPhysicalDevice> GetPhysicalDevices(const VkInstance& instance)
 
 std::vector<VkExtensionProperties> GetPhysicalDeviceExtensions(const VkPhysicalDevice& device)
 {
-
     uint32_t numExtensions = 0;
     if (vkEnumerateDeviceExtensionProperties(device, nullptr, &numExtensions, nullptr) != VK_SUCCESS || numExtensions == 0) {
         std::cerr << "Could not get the number of physical device extensions." << std::endl;
@@ -181,6 +181,95 @@ VkPhysicalDeviceProperties GetPhysicalDeviceProperties(const VkPhysicalDevice& d
 bool IsExtensionSupported(const char* extension, const std::vector<VkExtensionProperties>& availableExtensions)
 {
     return IsExtensionSupportedImpl(extension, availableExtensions);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+std::vector<VkQueueFamilyProperties> GetQueueProperties(const VkPhysicalDevice& device)
+{
+    uint32_t numQueueFamilies = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &numQueueFamilies, nullptr);
+    if (numQueueFamilies == 0) {
+        std::cerr << "ERROR: Couldn't get number of queue families!" << std::endl;
+        return std::vector<VkQueueFamilyProperties>();
+    }
+
+    std::vector<VkQueueFamilyProperties> queueFamilyProperties;
+    queueFamilyProperties.resize(numQueueFamilies);
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &numQueueFamilies, queueFamilyProperties.data());
+    if (numQueueFamilies == 0) {
+        std::cerr << "ERROR: Couldn't get properties of the queue families!" << std::endl;
+        return std::vector<VkQueueFamilyProperties>();
+    }
+
+    return queueFamilyProperties;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool IsQueueFamilySupportingFlags(const VkQueueFamilyProperties& queueFamily, const VkQueueFlags flagsToCheck)
+{
+    if (queueFamily.queueCount > 0 && (queueFamily.queueFlags & flagsToCheck) == flagsToCheck) {
+        return true;
+    }
+    return false;
+}
+
+/** Finds first element in @param queueFamilies which fullfills all requirements in @param desiredFlags and sets @param outIndex to the corresponding index.
+ *  @param outIndex remains unchanged if no queue fullfills the requirements
+ *  returns false if no match is found.
+ */
+bool GetSupportingQueueIndex(const std::vector<VkQueueFamilyProperties>& queueFamilies, const VkQueueFlags desiredFlags, uint32_t& outIndex)
+{
+    for (uint32_t i = 0; i < static_cast<uint32_t>(queueFamilies.size()); ++i) {
+        if (IsQueueFamilySupportingFlags(queueFamilies[i], desiredFlags)) {
+            outIndex = i;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+VkDevice CreateLogicalDevice(const VkPhysicalDevice& physicalDevice, const VkDeviceCreateInfo& deviceCreateInfo)
+{
+    VkDevice logicalDevice;
+    if (vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &logicalDevice) != VK_SUCCESS || logicalDevice == VK_NULL_HANDLE) {
+        std::cerr << "ERROR: Failed to create logical device" << std::endl;
+        return VK_NULL_HANDLE;
+    }
+
+    // TODO: might not be nice to do this here........... move elsewhere?
+    if (!LoadDeviceLevelFunctions(logicalDevice)) {
+        std::cerr << "WARNING: Could load device level functions!" << std::endl;
+    }
+
+    return logicalDevice;
+}
+
+void DestroyLogicalDevice(VkDevice& logicalDevice)
+{
+    if (logicalDevice) {
+        vkDestroyDevice(logicalDevice, nullptr);
+        logicalDevice = VK_NULL_HANDLE;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void DestroyInstance(VkInstance& instance)
+{
+    if (instance) {
+        vkDestroyInstance(instance, nullptr);
+        instance = VK_NULL_HANDLE;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void ReleaseRuntimeLibrary(VulkanRTLPtr& vulkanRTL)
+{
+    FreeRuntimeLibrary(vulkanRTL);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

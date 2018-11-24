@@ -1,5 +1,5 @@
 #ifndef EXPORTED_VULKAN_FUNCTION
-#define EXPORTED_VULKAN_FUNCTION( function )
+  #define EXPORTED_VULKAN_FUNCTION( function )
 #endif
 
 EXPORTED_VULKAN_FUNCTION(vkGetInstanceProcAddr)
@@ -9,7 +9,7 @@ EXPORTED_VULKAN_FUNCTION(vkGetInstanceProcAddr)
 ////////////////////////////////////////////////////////////////////////////////
 
 #ifndef GLOBAL_LEVEL_VULKAN_FUNCTION
-#define GLOBAL_LEVEL_VULKAN_FUNCTION( function )
+  #define GLOBAL_LEVEL_VULKAN_FUNCTION( function )
 #endif
 
 GLOBAL_LEVEL_VULKAN_FUNCTION(vkEnumerateInstanceExtensionProperties)
@@ -21,7 +21,7 @@ GLOBAL_LEVEL_VULKAN_FUNCTION(vkCreateInstance)
 ////////////////////////////////////////////////////////////////////////////////
 
 #ifndef INSTANCE_LEVEL_VULKAN_FUNCTION
-#define INSTANCE_LEVEL_VULKAN_FUNCTION( function )
+  #define INSTANCE_LEVEL_VULKAN_FUNCTION( function )
 #endif
 
 INSTANCE_LEVEL_VULKAN_FUNCTION(vkEnumeratePhysicalDevices)
@@ -30,6 +30,9 @@ INSTANCE_LEVEL_VULKAN_FUNCTION(vkGetPhysicalDeviceFeatures)
 INSTANCE_LEVEL_VULKAN_FUNCTION(vkCreateDevice)
 INSTANCE_LEVEL_VULKAN_FUNCTION(vkGetDeviceProcAddr)
 INSTANCE_LEVEL_VULKAN_FUNCTION(vkEnumerateDeviceExtensionProperties)
+INSTANCE_LEVEL_VULKAN_FUNCTION(vkGetPhysicalDeviceQueueFamilyProperties)
+INSTANCE_LEVEL_VULKAN_FUNCTION(vkDestroyInstance)
+
 //...
 
 #undef INSTANCE_LEVEL_VULKAN_FUNCTION
@@ -37,7 +40,7 @@ INSTANCE_LEVEL_VULKAN_FUNCTION(vkEnumerateDeviceExtensionProperties)
 ////////////////////////////////////////////////////////////////////////////////
 
 #ifndef INSTANCE_LEVEL_VULKAN_FUNCTION_FROM_EXTENSION
-#define INSTANCE_LEVEL_VULKAN_FUNCTION_FROM_EXTENSION( function, extension)
+  #define INSTANCE_LEVEL_VULKAN_FUNCTION_FROM_EXTENSION( function, extension)
 #endif
 
 INSTANCE_LEVEL_VULKAN_FUNCTION_FROM_EXTENSION(vkGetPhysicalDeviceSurfaceSupportKHR, VK_KHR_SURFACE_EXTENSION_NAME)
@@ -57,16 +60,29 @@ INSTANCE_LEVEL_VULKAN_FUNCTION_FROM_EXTENSION(vkGetPhysicalDeviceSurfaceFormatsK
 ////////////////////////////////////////////////////////////////////////////////
 
 #ifndef DEVICE_LEVEL_VULKAN_FUNCTION
-#define DEVICE_LEVEL_VULKAN_FUNCTION( function )
+  #define DEVICE_LEVEL_VULKAN_FUNCTION( function )
 #endif
+
+DEVICE_LEVEL_VULKAN_FUNCTION(vkGetDeviceQueue)
+DEVICE_LEVEL_VULKAN_FUNCTION(vkDeviceWaitIdle)
+DEVICE_LEVEL_VULKAN_FUNCTION(vkDestroyDevice)
+DEVICE_LEVEL_VULKAN_FUNCTION(vkCreateBuffer)
+DEVICE_LEVEL_VULKAN_FUNCTION(vkGetBufferMemoryRequirements)
+// ...
 
 #undef DEVICE_LEVEL_VULKAN_FUNCTION
 
 ////////////////////////////////////////////////////////////////////////////////
 
 #ifndef DEVICE_LEVEL_VULKAN_FUNCTION_FROM_EXTENSION
-#define DEVICE_LEVEL_VULKAN_FUNCTION_FROM_EXTENSION( function, extension)
+  #define DEVICE_LEVEL_VULKAN_FUNCTION_FROM_EXTENSION(function, extension)
 #endif
+
+DEVICE_LEVEL_VULKAN_FUNCTION_FROM_EXTENSION(vkCreateSwapchainKHR, VK_KHR_SWAPCHAIN_EXTENSION_NAME)
+DEVICE_LEVEL_VULKAN_FUNCTION_FROM_EXTENSION(vkGetSwapchainImagesKHR, VK_KHR_SWAPCHAIN_EXTENSION_NAME)
+DEVICE_LEVEL_VULKAN_FUNCTION_FROM_EXTENSION(vkAcquireNextImageKHR, VK_KHR_SWAPCHAIN_EXTENSION_NAME)
+DEVICE_LEVEL_VULKAN_FUNCTION_FROM_EXTENSION(vkQueuePresentKHR, VK_KHR_SWAPCHAIN_EXTENSION_NAME)
+DEVICE_LEVEL_VULKAN_FUNCTION_FROM_EXTENSION(vkDestroySwapchainKHR, VK_KHR_SWAPCHAIN_EXTENSION_NAME)
 
 #undef DEVICE_LEVEL_VULKAN_FUNCTION_FROM_EXTENSION
 

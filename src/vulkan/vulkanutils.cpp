@@ -1,10 +1,10 @@
 #include "vulkanutils.h"
 
-#include <iomanip>
-#include <sstream>
+#include "vulkan/vulkanfunctions.h"
+
 
 #if defined(__APPLE__) || defined(__linux)
-#include <dlfcn.h>
+  #include <dlfcn.h>
 #endif
 
 namespace dw::vulkan {
@@ -138,53 +138,53 @@ bool IsExtensionSupportedImpl(const char* extension, const std::vector<VkExtensi
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// overloaded operator<<
-std::ostream& operator<<(std::ostream& os, const VkPhysicalDeviceType& deviceType)
+
+bool LoadDeviceLevelFunctions(const VkDevice& logicalDevice)
 {
-    switch (deviceType) {
-        case VK_PHYSICAL_DEVICE_TYPE_OTHER          : os << "OTHER";          break;
-        case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU : os << "INTEGRATED GPU"; break;
-        case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU   : os << "DISCRETE GPU";   break;
-        case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU    : os << "VIRTUAL GPU";    break;
-        case VK_PHYSICAL_DEVICE_TYPE_CPU            : os << "CPU";            break;
-        default                                     : os << "UNRECOGNISED";   break;
+#define DEVICE_LEVEL_VULKAN_FUNCTION( name )                                                    \
+    name = (PFN_##name)vkGetDeviceProcAddr( logicalDevice, #name );                             \
+    if( name == nullptr ) {                                                                     \
+        std::cout << "Could not load device-level Vulkan function named: " #name << std::endl;  \
+        return false;                                                                           \
     }
-    return os;
+
+#include "listofvulkanfunctions.inl"
+
+    return true;
 }
-std::ostream& operator<<(std::ostream& os, const VkPhysicalDevice& device)
+
+////////////////////////////////////////////////////////////////////////////////
+
+// TODO: Not tested yet
+bool LoadDeviceLevelFunctionsFromExtensions(const VkDevice& logicalDevice, const std::vector<char const *>& enabledExtensions)
 {
-    VkPhysicalDeviceProperties properties;
-    vkGetPhysicalDeviceProperties(device, &properties);
-    return os << properties;
-}
-std::ostream& operator<<(std::ostream& os, const VkExtensionProperties& properties)
-{
-    return os << properties.extensionName << " [ " << properties.specVersion << " ]";
-}
-std::ostream& operator<<(std::ostream& os, const VkPhysicalDeviceProperties& properties)
-{
-    return os << properties.deviceName << " [ " << properties.deviceType << " ]";
+#define DEVICE_LEVEL_VULKAN_FUNCTION_FROM_EXTENSION( name, extension )                                  \
+    for (const char* enabledExtension : enabledExtensions) {                                            \
+        if (std::string(enabledExtension) == std::string(extension)) {                                  \
+            name = (PFN_##name)vkGetDeviceProcAddr(logicalDevice, #name);                               \
+            if (name == nullptr) {                                                                      \
+                std::cerr << "Could not load device-level Vulkan function named: " #name << std::endl;  \
+                return false;                                                                           \
+            }                                                                                           \
+        }                                                                                               \
+    }
+
+#include "listofvulkanfunctions.inl"
+    return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-// overloaded toString functions
-std::string toString(const VkPhysicalDeviceType& deviceType)
+
+void FreeRuntimeLibrary(VulkanRTLPtr& vulkanRTL)
 {
-    std::ostringstream os;
-    os << deviceType;
-    return os.str();
+#if defined (_WIN32)
+    FreeLibrary(vulkanRTL);
+#elif defined (__linux) || defined (__APPLE__)
+    dlclose(vulkanRTL);
+#endif
+    vulkanRTL = nullptr;
 }
-std::string toString(const VkPhysicalDevice& device)
-{
-    VkPhysicalDeviceProperties properties;
-    vkGetPhysicalDeviceProperties(device, &properties);
-    return toString(properties);
-}
-std::string toString(const VkPhysicalDeviceProperties& properties)
-{
-    std::ostringstream os;
-    os << properties;
-    return os.str();
-}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 } // namespace dw::vulkan

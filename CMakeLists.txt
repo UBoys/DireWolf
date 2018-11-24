@@ -30,6 +30,7 @@ add_library(direwolf
     src/renderengine.cpp
     include/direwolf/renderengine.h
     # TODO: this shouldn't be here.. remove when vulkan stuff is included in the direwolf wrappers
+    include/direwolf/vulkan/vulkancommons.h
     include/direwolf/vulkan/vulkansetup.h
 )
 
@@ -74,6 +75,7 @@ if (DIREWOLF_VULKAN_ENABLED)
     PRIVATE
       # TODO: this should be here src/vulkan/vulkansetup.h.. add when vulkan stuff is included in the direwolf wrappers
       src/vulkan/listofvulkanfunctions.inl
+      src/vulkan/vulkancommons.cpp
       src/vulkan/vulkanfunctions.cpp
       src/vulkan/vulkanfunctions.h
       src/vulkan/vulkansetup.cpp
