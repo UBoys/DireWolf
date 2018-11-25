@@ -10,6 +10,7 @@ struct PlatformData;
 class RenderContextWin final : public IRenderContextOGL {
 public:
     RenderContextWin(const PlatformData& platformData);
+
     virtual void SwapBuffers() const override;
 };
 
