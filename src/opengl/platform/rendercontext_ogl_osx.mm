@@ -8,6 +8,11 @@
 #include <OpenGL/gl3.h>
 #include <OpenGL/glext.h>
 
+namespace {
+    NSOpenGLContext* s_context;
+    NSOpenGLView* s_view;
+}
+
 namespace dw {
 
 RenderContextOSX::RenderContextOSX(const PlatformData& platformData) {
@@ -68,8 +73,8 @@ RenderContextOSX::RenderContextOSX(const PlatformData& platformData) {
     // trying to glClear() for the first time.
     [glContext setView:glView];
 
-    m_view = glView;
-    m_context = glContext;
+    s_view = glView;
+    s_context = glContext;
 
     // Get the name of the video card.
     auto vendorString = static_cast<const uint8_t*>(glGetString(GL_VENDOR));
@@ -80,17 +85,14 @@ RenderContextOSX::RenderContextOSX(const PlatformData& platformData) {
 };
 
 RenderContextOSX::~RenderContextOSX() {
-    NSOpenGLView* glView = static_cast<NSOpenGLView*>(m_view);
-    [glView release];
-    m_view = nullptr;
-    m_context = nullptr;
+    [s_view release];
+    s_view = nullptr;
+    s_context = nullptr;
 }
 
 void RenderContextOSX::SwapBuffers() const {
-    std::cerr << "Swapping buffers \n";
-    NSOpenGLContext* glContext = static_cast<NSOpenGLContext*>(m_context);
-    [glContext makeCurrentContext];
-    [glContext flushBuffer];
+    [s_context makeCurrentContext];
+    [s_context flushBuffer];
 }
 
 }  // namespace dw
