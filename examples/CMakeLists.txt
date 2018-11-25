@@ -1,12 +1,14 @@
+message(STATUS "\nAdding examples" )
+
 # Always include GLFW for now
 add_subdirectory(ext/glfw)
 
 add_executable(example_vulkan example_vulkan.cpp)
-target_link_libraries(example_vulkan direwolf glfw)
+target_link_libraries(example_vulkan ${PROJECT_NAME} glfw)
 target_include_directories(example_vulkan PUBLIC ../include)
 
 add_executable(example_opengl example_opengl.cpp)
-target_link_libraries(example_opengl direwolf glfw)
+target_link_libraries(example_opengl ${PROJECT_NAME} glfw)
 target_include_directories(example_opengl PUBLIC ../include)
 
 if (DIREWOLF_VULKAN_ENABLED)
