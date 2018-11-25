@@ -4,7 +4,13 @@
 #include "opengl/irendercontext_ogl.h"
 #include <map>
 #include <memory>
-#include <GL/glew.h>
+
+#if defined(_WIN32)
+  #include <GL/glew.h>
+#elif defined(__APPLE__)
+  #include <OpenGL/gl3.h>
+  #include <OpenGL/glext.h>
+#endif
 
 namespace dw {
 

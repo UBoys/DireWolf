@@ -54,7 +54,9 @@ if (DIREWOLF_OPENGL_ENABLED)
       src/opengl/renderer_ogl.cpp
       src/opengl/irendercontext_ogl.h
       src/opengl/platform/rendercontext_ogl_win.cpp
-      src/opengl/platform/rendercontext_ogl_win.h)
+      src/opengl/platform/rendercontext_ogl_win.h
+      src/opengl/platform/rendercontext_ogl_osx.mm
+      src/opengl/platform/rendercontext_ogl_osx.h)
   target_link_libraries(direwolf libglew_static)
 endif (DIREWOLF_OPENGL_ENABLED)
 

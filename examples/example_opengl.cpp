@@ -4,15 +4,19 @@
 #include "GLFW/glfw3.h"
 
 #if defined(_WIN32)
-#define GLFW_EXPOSE_NATIVE_WIN32
+  #define GLFW_EXPOSE_NATIVE_WIN32
+#elif defined(__APPLE__)
+  #define GLFW_EXPOSE_NATIVE_COCOA
 #endif
 #include <GLFW/glfw3native.h>
 
 namespace {
     void _CallbackError(int error, const char* description) {} // TODO: Implement
     void* _GetGlfwNativeWindowhandle(GLFWwindow* window) {
-#if defined _WIN32
+#if defined(_WIN32)
         return static_cast<void*>(glfwGetWin32Window(window));
+#elif defined(__APPLE__)
+        return static_cast<void*>(glfwGetCocoaWindow(window));
 #endif
     }
 }
