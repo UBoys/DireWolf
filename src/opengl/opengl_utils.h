@@ -1,17 +1,23 @@
 // TODO: Remove this file, quite temporary to move out a lot of the mess
-#include <GL/glew.h>
 #include <string>
 #include <fstream>
 #include <iostream>
 #include <vector>
 
+#if defined(_WIN32)
+  #include <GL/glew.h>
+#elif defined(__APPLE__)
+  #include <OpenGL/gl3.h>
+  #include <OpenGL/glext.h>
+#endif
+
 namespace dw::opengl::utils {
 
-    std::string ReadFile(const char *filePath) {
+    std::string ReadFile(const char* filePath) {
         std::string content;
         std::ifstream fileStream(filePath, std::ios::in);
 
-        if(!fileStream.is_open()) {
+        if (!fileStream.is_open()) {
             std::cerr << "Could not read file " << filePath << ". File does not exist." << std::endl;
             return "";
         }
@@ -26,7 +32,7 @@ namespace dw::opengl::utils {
         return content;
     }
 
-    GLuint LoadShader(const char *vertex_path, const char *fragment_path) {
+    GLuint LoadShader(const char* vertex_path, const char* fragment_path) {
         GLuint vertShader = glCreateShader(GL_VERTEX_SHADER);
         GLuint fragShader = glCreateShader(GL_FRAGMENT_SHADER);
 

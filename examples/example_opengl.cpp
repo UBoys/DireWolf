@@ -4,15 +4,19 @@
 #include "GLFW/glfw3.h"
 
 #if defined(_WIN32)
-#define GLFW_EXPOSE_NATIVE_WIN32
+  #define GLFW_EXPOSE_NATIVE_WIN32
+#elif defined(__APPLE__)
+  #define GLFW_EXPOSE_NATIVE_COCOA
 #endif
 #include <GLFW/glfw3native.h>
 
 namespace {
     void _CallbackError(int error, const char* description) {} // TODO: Implement
     void* _GetGlfwNativeWindowhandle(GLFWwindow* window) {
-#if defined _WIN32
+#if defined(_WIN32)
         return static_cast<void*>(glfwGetWin32Window(window));
+#elif defined(__APPLE__)
+        return static_cast<void*>(glfwGetCocoaWindow(window));
 #endif
     }
 }
@@ -52,27 +56,18 @@ int main() {
 
     // Create a vertex buffer handle
     dw::GfxObject vertexBuffer;
-    // Create the vertex buffer resource 
+    // Create the vertex buffer resource
     renderEngine->CreateVertexBuffer(vertexBuffer, /*count*/3);
     // Get the pointer to the vertex buffer
     float* data = static_cast<float*>(renderEngine->MapVertexBuffer(vertexBuffer));
+    // An array of 3 vectors which represents 3 vertices
+    const float vData[] = {
+        -1.0f, -1.0f, 0.0f, 1.0f,
+        1.0f, -1.0f, 0.0f, 1.0f,
+        0.0f, 1.0f, 0.0f, 1.0f
+    };
 
-    // Ugly - fill it with some data
-    data[0] = -1.0f;
-    data[1] = -1.0f;
-    data[2] = 0.0f;
-    data[3] = 1.0f;
-
-    data[4] = 1.0f;
-    data[5] = -1.0f;
-    data[6] = 0.0f;
-    data[7] = 1.0f;
-
-    data[8] = 0.0f;
-    data[9] = 1.0f;
-    data[10] = 0.0f;
-    data[11] = 1.0f;
-
+    std::memcpy(data, vData, sizeof(vData));
     // Give the data back to the engine
     renderEngine->UnmapVertexBuffer(vertexBuffer);
 
