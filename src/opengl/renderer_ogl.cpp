@@ -4,6 +4,8 @@
 
 #if defined(_WIN32)
   #include "platform/rendercontext_ogl_win.h"
+#elif defined(__APPLE__)
+  #include "platform/rendercontext_ogl_osx.h"
 #endif
 
 #include <string>
@@ -27,6 +29,8 @@ void RendererOGL::Initialize(const RendererCaps& caps, const PlatformData& platf
     // Initialize render context
 #if defined(_WIN32)
     m_renderContext = std::make_unique<RenderContextWin>(platformData);
+#elif defined(__APPLE__)
+    m_renderContext = std::make_unique<RenderContextOSX>(platformData);
 #endif
 
     // Load all static resources
