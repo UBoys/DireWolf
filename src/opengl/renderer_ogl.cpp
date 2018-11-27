@@ -25,7 +25,7 @@ namespace {
 namespace dw {
 
 void RendererOGL::Initialize(const RendererCaps& caps, const PlatformData& platformData) {
-	LOGD("Initializing OpenGL Renderer");
+    LOGD("Initializing OpenGL Renderer");
 
     // Initialize render context
 #if defined(_WIN32)
@@ -68,7 +68,7 @@ bool RendererOGL::CreateVertexBuffer(const GfxObject& object, uint32_t count) {
 }
 
 void* RendererOGL::MapVertexBuffer(const GfxObject& object) {
-	LOGD("Mapping vertex buffer");
+    LOGD("Mapping vertex buffer");
     const auto vertexBufferIt = m_vertexBuffers.find(object);
     assert(vertexBufferIt != m_vertexBuffers.end() && "Failed to find requested vertex buffer");
     glBindBuffer(GL_ARRAY_BUFFER, vertexBufferIt->second);
@@ -78,7 +78,7 @@ void* RendererOGL::MapVertexBuffer(const GfxObject& object) {
 }
 
 void RendererOGL::UnmapVertexBuffer(const GfxObject& object) {
-	LOGD("Unmapping vertex buffer");
+    LOGD("Unmapping vertex buffer");
     const auto vertexBufferIt = m_vertexBuffers.find(object);
     assert(vertexBufferIt != m_vertexBuffers.end() && "Failed to find requested vertex buffer");
     glBindBuffer(GL_ARRAY_BUFFER, vertexBufferIt->second);
@@ -103,7 +103,7 @@ void RendererOGL::Draw(DrawCommandData* data) {
 }
 
 void RendererOGL::BindPipelineState(BindPipelineStateCommandData* data) {
-	LOGD("Binding pipeline state");
+    LOGD("Binding pipeline state");
     // TODO: Bind all PSO states. Hardcode our only program for now
     //glUseProgram(s_HARDCODED_PROGRAM_REMOVE_ME);
 }

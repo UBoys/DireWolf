@@ -31,7 +31,7 @@ public:
     static void Destroy();
 
 private:
-	static Severity m_minSeverity;
+    static Severity m_minSeverity;
 };
 
 } // namespace dw
