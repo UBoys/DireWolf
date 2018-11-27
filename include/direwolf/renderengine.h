@@ -9,6 +9,7 @@ namespace dw {
 class RenderEngine {
 public:
     RenderEngine(const PlatformData& platformData, const InitData& initData);
+	~RenderEngine();
 
 	/* Creates a vertex buffer resource */
 	bool CreateVertexBuffer(const GfxObject& object, uint32_t count) const;

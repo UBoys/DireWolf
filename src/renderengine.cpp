@@ -9,7 +9,6 @@ namespace dw {
 
 RenderEngine::RenderEngine(const PlatformData& platformData, const InitData& initData) {
 	Logger::Init(Logger::DEBUG, "");
-	DEBUG_LOG(Logger::Severity::CONFIG, "Setting up Direwolf");
 
     switch(initData.rendererType) {
         case RASTERIZER:
@@ -21,6 +20,10 @@ RenderEngine::RenderEngine(const PlatformData& platformData, const InitData& ini
         default:
             std::cerr << "Unknown renderer type\n";
     }
+}
+
+RenderEngine::~RenderEngine() {
+	Logger::Destroy();
 }
 
 bool RenderEngine::CreateVertexBuffer(const GfxObject& object, uint32_t count) const {

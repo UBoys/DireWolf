@@ -37,7 +37,7 @@ void Logger::Write(const Severity severity, const std::string& message) {
 
 	if (severity >= s_minSeverity) {
 		std::ostream& stream = s_fileStream.is_open() ? s_fileStream : std::cout;
-		stream << "DW " << SEVERITY_MAP[severity] << ": " << message << std::endl;
+		stream << "[DW] " << SEVERITY_MAP[severity] << ": " << message << std::endl;
 	}
 }
 

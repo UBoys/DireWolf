@@ -1,6 +1,12 @@
 #pragma once
 
-#define DEBUG_LOG(PRIORITY, MESSAGE) Logger::Write(PRIORITY, MESSAGE);
+#define LOG(SEVERITY, MESSAGE) Logger::Write(SEVERITY, MESSAGE);
+
+#define LOGD(MESSAGE) Logger::Write(Logger::DEBUG, MESSAGE);
+#define LOGE(MESSAGE) Logger::Write(Logger::ERR, MESSAGE);
+#define LOGI(MESSAGE) Logger::Write(Logger::INFO, MESSAGE);
+#define LOGW(MESSAGE) Logger::Write(Logger::WARNING, MESSAGE);
+#define LOGC(MESSAGE) Logger::Write(Logger::CONFIG, MESSAGE);
 
 #include <string>
 
