@@ -3,10 +3,14 @@
 #include <iostream>
 // TODO: Build definitions should decide what we include and build
 #include "opengl/renderer_ogl.h"
+#include "utils/logger.h"
 
 namespace dw {
 
-RenderEngine::RenderEngine(const PlatformData& platformData, const InitData& initData){
+RenderEngine::RenderEngine(const PlatformData& platformData, const InitData& initData) {
+	Logger::Init(Logger::DEBUG, "");
+	DEBUG_LOG(Logger::Severity::CONFIG, "Setting up Direwolf");
+
     switch(initData.rendererType) {
         case RASTERIZER:
             _SetupRasterizer(platformData, initData.backendType);
