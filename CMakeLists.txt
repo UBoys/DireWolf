@@ -27,8 +27,8 @@ message(STATUS "Creating DireWolf as a ${lib_type} library")
 add_library(${PROJECT_NAME}
   ${lib_type}
     src/renderengine.cpp
-	src/utils/logger.cpp
-	src/utils/logger.h
+    src/utils/logger.cpp
+    src/utils/logger.h
     include/direwolf/renderengine.h
 )
 
