@@ -26,8 +26,8 @@ public:
     Logger(const Logger& logger) = delete;
     Logger& operator= (const Logger& logger) = delete;
 
-    static void Init(const Severity minSeverity, const std::string&& logFileName);
-    static void Write(const Severity severity, const std::string& message);
+    static void Init(Severity minSeverity, const std::string&& logFileName);
+    static void Write(Severity severity, const std::string&& message);
     static void Destroy();
 
 private:

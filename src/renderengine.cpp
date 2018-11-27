@@ -8,7 +8,13 @@
 namespace dw {
 
 RenderEngine::RenderEngine(const PlatformData& platformData, const InitData& initData) {
+// TODO: How to non-IDE detect Release/Debug mode? We want DW_DEBUG or equivalent 
+#if defined(_DEBUG)
 	Logger::Init(Logger::DEBUG, "");
+#else
+	Logger::Init(Logger::INFO, "");
+#endif
+	LOGD("Setting up DireWolf!");
 
     switch(initData.rendererType) {
         case RASTERIZER:
@@ -47,7 +53,7 @@ void RenderEngine::Render(const std::vector<RenderCommand>& commandBuffer) const
 }
 
 void RenderEngine::_SetupRasterizer(const PlatformData& platformData, const BackendType& type) {
-    std::cout << "DireWolf: Initializing render library!\n";
+	LOGI("Initializing rasterizer");
     RendererCaps caps = {};
     switch (type) {
         case OPENGL:

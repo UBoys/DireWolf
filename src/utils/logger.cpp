@@ -20,7 +20,7 @@ namespace {
 
 namespace dw {
 
-void Logger::Init(const Severity minSeverity, const std::string&& logFileName) {
+void Logger::Init(Severity minSeverity, const std::string&& logFileName) {
     assert(!s_isInitialized && "You should only initialize this class once\n");
 
     s_isInitialized = true;
@@ -32,7 +32,7 @@ void Logger::Init(const Severity minSeverity, const std::string&& logFileName) {
 }
 
 // TODO: Make use of streams instead of expensive concatenation of strings
-void Logger::Write(const Severity severity, const std::string& message) {
+void Logger::Write(Severity severity, const std::string&& message) {
 	assert(s_isInitialized && "You must initialize this class before using this function\n");
 
 	if (severity >= s_minSeverity) {
