@@ -27,35 +27,21 @@ message(STATUS "Creating DireWolf as a ${lib_type} library")
 add_library(${PROJECT_NAME}
   ${lib_type}
     src/renderengine.cpp
+    src/utils/logger.cpp
+    src/utils/logger.h
     include/direwolf/renderengine.h
 )
 
 if (DIREWOLF_BUILD_EXAMPLES)
   add_subdirectory(examples)
-endif()
+endif(DIREWOLF_BUILD_EXAMPLES)
 
 if (DIREWOLF_OPENGL_ENABLED)
-  message(STATUS "\nIncluding OpenGL module to ${PROJECT_NAME}")
+  add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/src/opengl)
 
+  # TODO: Might want to put this in OGL module but CMake doesn't like that
   add_definitions(-DGLEW_STATIC)
-  add_subdirectory(ext/glew-cmake)
-
-  target_include_directories(${PROJECT_NAME}
-    PRIVATE
-      ${CMAKE_CURRENT_SOURCE_DIR}/ext/glew-cmake/include
-      ${CMAKE_CURRENT_SOURCE_DIR}/ext/glew-cmake/src
-  )
-
-  target_sources(${PROJECT_NAME}
-    PRIVATE
-      src/opengl/renderer_ogl.cpp
-      src/opengl/irendercontext_ogl.h
-      src/opengl/platform/rendercontext_ogl_win.cpp
-      src/opengl/platform/rendercontext_ogl_win.h
-      src/opengl/platform/rendercontext_ogl_osx.mm
-      src/opengl/platform/rendercontext_ogl_osx.h
-  )
-
+  add_subdirectory(${PROJECT_SOURCE_DIR}/ext/glew-cmake)
   target_link_libraries(${PROJECT_NAME} libglew_static)
 endif (DIREWOLF_OPENGL_ENABLED)
 

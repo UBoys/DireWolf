@@ -3,10 +3,19 @@
 #include <iostream>
 // TODO: Build definitions should decide what we include and build
 #include "opengl/renderer_ogl.h"
+#include "utils/logger.h"
 
 namespace dw {
 
-RenderEngine::RenderEngine(const PlatformData& platformData, const InitData& initData){
+RenderEngine::RenderEngine(const PlatformData& platformData, const InitData& initData) {
+// TODO: How to non-IDE detect Release/Debug mode? We want DW_DEBUG or equivalent 
+#if defined(_DEBUG)
+    Logger::Init(Logger::DEBUG, "");
+#else
+    Logger::Init(Logger::INFO, "");
+#endif
+    LOGD("Setting up DireWolf!");
+
     switch(initData.rendererType) {
         case RASTERIZER:
             _SetupRasterizer(platformData, initData.backendType);
@@ -19,12 +28,16 @@ RenderEngine::RenderEngine(const PlatformData& platformData, const InitData& ini
     }
 }
 
+RenderEngine::~RenderEngine() {
+    Logger::Destroy();
+}
+
 bool RenderEngine::CreateVertexBuffer(const GfxObject& object, uint32_t count) const {
-	return m_renderer->CreateVertexBuffer(object, count);
+    return m_renderer->CreateVertexBuffer(object, count);
 }
 
 void* RenderEngine::MapVertexBuffer(const GfxObject& object) {
-	return m_renderer->MapVertexBuffer(object);
+    return m_renderer->MapVertexBuffer(object);
 }
 
 void RenderEngine::UnmapVertexBuffer(const GfxObject& object) {
@@ -32,15 +45,15 @@ void RenderEngine::UnmapVertexBuffer(const GfxObject& object) {
 }
 
 bool RenderEngine::CreatePipelineState(const GfxObject& object, const PipelineState& pipelineState) const {
-	return m_renderer->CreatePipelineState(object, pipelineState);
+    return m_renderer->CreatePipelineState(object, pipelineState);
 }
 
 void RenderEngine::Render(const std::vector<RenderCommand>& commandBuffer) const {
-	return m_renderer->Render(commandBuffer);
+    return m_renderer->Render(commandBuffer);
 }
 
 void RenderEngine::_SetupRasterizer(const PlatformData& platformData, const BackendType& type) {
-    std::cout << "DireWolf: Initializing render library!\n";
+    LOGI("Initializing rasterizer");
     RendererCaps caps = {};
     switch (type) {
         case OPENGL:
