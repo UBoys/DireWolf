@@ -5,12 +5,12 @@
 namespace dw {
 
 enum RenderCommandType {
-    BindPipelineStateCommand,
-    BindVertexBufferCommand,
-    BindIndexBufferCommand,
-    BindTexturesCommand,
-    BindSamplersCommand,
-    DrawCommand
+    BIND_PIPELINE_STATE,
+    BIND_VERTEX_BUFFER,
+    BIND_INDEX_BUFFER,
+    BIND_TEXTURES,
+    BIND_SAMPLERS,
+    DRAW
 };
 
 // Handle for each renderer resource.
@@ -38,6 +38,10 @@ struct BindVertexBufferCommandData {
     GfxObject* object;
 };
 
+struct BindConstantBufferCommandData {
+    GfxObject* object;
+};
+
 struct BindPipelineStateCommandData {
     GfxObject* object;
 };
@@ -57,9 +61,11 @@ struct PlatformData;
 struct InitData;
 struct TextureDescription {};
 struct SamplerDescription {};
-// Should contain rasterizer state, depth stencil state, blend state and shader
-struct PipelineState {};
-// TODO: Constant buffers
+// TODO: 
+struct PipelineState {
+	char* vertexShader;
+	char* fragmentShader;
+};
 
 class IRenderer {
 public:
@@ -67,16 +73,19 @@ public:
 
     virtual void Initialize(const RendererCaps& caps, const PlatformData& platformData) = 0;
 
+	virtual bool CreateConstantBuffer(const GfxObject& object, uint32_t count) = 0;
     virtual bool CreateVertexBuffer(const GfxObject& object, uint32_t count) = 0;
     virtual bool CreateIndexBuffer(const GfxObject& object, uint32_t count) = 0;
     virtual bool CreatePipelineState(const GfxObject& object, const PipelineState& state) = 0;
     virtual bool CreateTexture(const GfxObject& object, const TextureDescription& description, const std::vector<void*>& data) = 0;
     virtual bool CreateSamplerState(const GfxObject& object, const SamplerDescription& description) = 0;
 
+	virtual void* MapConstantBuffer(const GfxObject& handle) = 0;
     virtual void* MapVertexBuffer(const GfxObject& handle) = 0;
     virtual void* MapIndexBuffer(const GfxObject& handle) = 0;
+	virtual void UnmapConstantBuffer(const GfxObject& handle) = 0;
     virtual void UnmapVertexBuffer(const GfxObject& handle) = 0;
-    virtual void UnmapIndexBuffer(const GfxObject& handle, const uint32_t count) = 0;
+    virtual void UnmapIndexBuffer(const GfxObject& handle, uint32_t count) = 0;
 
     virtual void DestroyVertexBuffer(const GfxObject& handle) = 0;
     virtual void DestroyIndexBuffer(const GfxObject& handle) = 0;

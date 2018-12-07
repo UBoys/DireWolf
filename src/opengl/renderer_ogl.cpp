@@ -19,6 +19,7 @@
 
 namespace {
     GLuint s_HARDCODED_PROGRAM_REMOVE_ME; // TODO: Remove
+	GLuint s_HARDCODED_BLOCK_INDEX;
     const uint32_t HARDCODED_VERTEX_ELEMENT_SIZE = sizeof(float) * 4; // TODO: Remove
 }
 
@@ -35,11 +36,22 @@ void RendererOGL::Initialize(const RendererCaps& caps, const PlatformData& platf
 #endif
 
     // Load all static resources
-    s_HARDCODED_PROGRAM_REMOVE_ME = opengl::utils::LoadShader("../../src/opengl/shaders/standard.vertex", "../../src/opengl/shaders/standard.fragment");
-    glClearColor(0.0f, 1.0f, 0.0f, 1.0f); // Display ugly green color
+    s_HARDCODED_PROGRAM_REMOVE_ME = opengl::utils::LoadShader("../../examples/example_spinning_cube/standard.vertex", "../../examples/example_spinning_cube/standard.fragment");
+    s_HARDCODED_BLOCK_INDEX = glGetUniformBlockIndex(s_HARDCODED_PROGRAM_REMOVE_ME, "shader_data");
+
+	glClearColor(0.0f, 1.0f, 0.0f, 1.0f); // Display ugly green color
 
     // TODO: Part of creating the pipeline state
     glUseProgram(s_HARDCODED_PROGRAM_REMOVE_ME);
+}
+
+bool RendererOGL::CreateConstantBuffer(const GfxObject& object, uint32_t size) {
+	GLuint constantBuffer;
+	glGenBuffers(1, &constantBuffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, constantBuffer);
+	glBufferData(GL_UNIFORM_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+	m_constantBuffers.emplace(object, constantBuffer);
+	return true;
 }
 
 // TODO: Pass in what desired layout in this function t.ex float4/pos, float4/color, float4/somethingelse. Right now assume float4 positions
@@ -67,6 +79,22 @@ bool RendererOGL::CreateVertexBuffer(const GfxObject& object, uint32_t count) {
     return true;
 }
 
+void* RendererOGL::MapConstantBuffer(const GfxObject& object) {
+	const auto constBufferIt = m_constantBuffers.find(object);
+    assert(constBufferIt != m_constantBuffers.end() && "Failed to find requested constant buffer");
+	glBindBuffer(GL_UNIFORM_BUFFER, constBufferIt->second);
+	void *mappedBuffer = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
+	return mappedBuffer;
+}
+
+void RendererOGL::UnmapConstantBuffer(const GfxObject& object) {
+	LOGD("Unmapping constant buffer");
+	const auto constBufferIt = m_constantBuffers.find(object);
+	assert(constBufferIt != m_constantBuffers.end() && "Failed to find requested constant buffer");
+	glBindBuffer(GL_UNIFORM_BUFFER, constBufferIt->second);
+	glUnmapBuffer(GL_UNIFORM_BUFFER);
+}
+
 void* RendererOGL::MapVertexBuffer(const GfxObject& object) {
     LOGD("Mapping vertex buffer");
     const auto vertexBufferIt = m_vertexBuffers.find(object);
@@ -85,7 +113,46 @@ void RendererOGL::UnmapVertexBuffer(const GfxObject& object) {
     glUnmapBuffer(GL_ARRAY_BUFFER);
 }
 
-void RendererOGL::BindVertexBuffer(BindVertexBufferCommandData* data) {
+bool RendererOGL::CreatePipelineState(const GfxObject& object, const PipelineState& pipelineState) {
+    // TODO: Create program state here which includes the shader
+    return false;
+}
+
+void RendererOGL::Render(const std::vector<RenderCommand>& commandBuffer) {
+    glClear(GL_COLOR_BUFFER_BIT); // TODO: Separate clear command?
+    for (const RenderCommand& command : commandBuffer) {
+        switch (command.type) {
+            case BIND_VERTEX_BUFFER:
+                bindVertexBuffer(static_cast<BindVertexBufferCommandData*>(command.data));
+                break;
+            case BIND_PIPELINE_STATE:
+                bindPipelineState(static_cast<BindPipelineStateCommandData*>(command.data));
+                break;
+            case DRAW:
+                draw(static_cast<DrawCommandData*>(command.data));
+                break;
+            default:
+                std::cerr << "Unsupported rendering command!" << std::endl;
+        }
+    }
+    m_renderContext->SwapBuffers();
+}
+
+void RendererOGL::bindPipelineState(BindPipelineStateCommandData* data) const {
+    LOGD("Binding pipeline state");
+    // TODO: Bind all PSO states. Hardcode our only program for now
+    //glUseProgram(s_HARDCODED_PROGRAM_REMOVE_ME);
+}
+
+void RendererOGL::bindConstantBuffer(BindConstantBufferCommandData* data, uint8_t slot) const {
+	const auto constBufferIt = m_vertexBuffers.find(*data->object);
+
+    // TODO: Make our own asserts DW_ASSERT() or something.
+    assert(constBufferIt != m_constantBuffers.end() && "Failed to find requested vertex buffer");
+	glBindBufferBase(GL_UNIFORM_BUFFER, slot, constBufferIt->second);	
+}
+
+void RendererOGL::bindVertexBuffer(BindVertexBufferCommandData* data) const {
     const auto vertexBufferIt = m_vertexBuffers.find(*data->object);
 
     // TODO: Make our own asserts DW_ASSERT() or something.
@@ -93,39 +160,8 @@ void RendererOGL::BindVertexBuffer(BindVertexBufferCommandData* data) {
     glBindBuffer(GL_ARRAY_BUFFER, vertexBufferIt->second);
 }
 
-bool RendererOGL::CreatePipelineState(const GfxObject& object, const PipelineState& pipelineState) {
-    // TODO: Create program state here which includes the shader
-    return false;
-}
-
-void RendererOGL::Draw(DrawCommandData* data) {
+void RendererOGL::draw(DrawCommandData* data) const {
     glDrawArrays(GL_TRIANGLES, data->startVertex, data->count);
-}
-
-void RendererOGL::BindPipelineState(BindPipelineStateCommandData* data) {
-    LOGD("Binding pipeline state");
-    // TODO: Bind all PSO states. Hardcode our only program for now
-    //glUseProgram(s_HARDCODED_PROGRAM_REMOVE_ME);
-}
-
-void RendererOGL::Render(const std::vector<RenderCommand>& commandBuffer) {
-    glClear(GL_COLOR_BUFFER_BIT); // TODO: Separate clear command?
-    for (const RenderCommand& command : commandBuffer) {
-        switch (command.type) {
-            case BindVertexBufferCommand:
-                BindVertexBuffer(static_cast<BindVertexBufferCommandData*>(command.data));
-                break;
-            case BindPipelineStateCommand:
-                BindPipelineState(static_cast<BindPipelineStateCommandData*>(command.data));
-                break;
-            case DrawCommand:
-                Draw(static_cast<DrawCommandData*>(command.data));
-                break;
-            default:
-                std::cerr << "Unsupported rendering command!" << std::endl;
-        }
-    }
-    m_renderContext->SwapBuffers();
 }
 
 }  // namespace dw
