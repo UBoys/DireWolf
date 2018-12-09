@@ -64,8 +64,8 @@ struct TextureDescription {};
 struct SamplerDescription {};
 // TODO: 
 struct PipelineState {
-	char* vertexShader;
-	char* fragmentShader;
+    char* vertexShader;
+    char* fragmentShader;
 };
 
 class IRenderer {
@@ -74,17 +74,17 @@ public:
 
     virtual void Initialize(const RendererCaps& caps, const PlatformData& platformData) = 0;
 
-	virtual bool CreateConstantBuffer(const GfxObject& object, uint32_t count) = 0;
+    virtual bool CreateConstantBuffer(const GfxObject& object, uint32_t count) = 0;
     virtual bool CreateVertexBuffer(const GfxObject& object, uint32_t count) = 0;
     virtual bool CreateIndexBuffer(const GfxObject& object, uint32_t count) = 0;
     virtual bool CreatePipelineState(const GfxObject& object, const PipelineState& state) = 0;
     virtual bool CreateTexture(const GfxObject& object, const TextureDescription& description, const std::vector<void*>& data) = 0;
     virtual bool CreateSamplerState(const GfxObject& object, const SamplerDescription& description) = 0;
 
-	virtual void* MapConstantBuffer(const GfxObject& handle) = 0;
+    virtual void* MapConstantBuffer(const GfxObject& handle) = 0;
     virtual void* MapVertexBuffer(const GfxObject& handle) = 0;
     virtual void* MapIndexBuffer(const GfxObject& handle) = 0;
-	virtual void UnmapConstantBuffer(const GfxObject& handle) = 0;
+    virtual void UnmapConstantBuffer(const GfxObject& handle) = 0;
     virtual void UnmapVertexBuffer(const GfxObject& handle) = 0;
     virtual void UnmapIndexBuffer(const GfxObject& handle, uint32_t count) = 0;
 

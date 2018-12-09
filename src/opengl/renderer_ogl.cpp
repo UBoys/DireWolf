@@ -74,14 +74,14 @@ void RendererOGL::Initialize(const RendererCaps& caps, const PlatformData& platf
 }
 
 bool RendererOGL::CreateConstantBuffer(const GfxObject& object, uint32_t size) {
-	GLuint constantBuffer;
-	GL_CHECK(glGenBuffers(1, &constantBuffer));
+    GLuint constantBuffer;
+    GL_CHECK(glGenBuffers(1, &constantBuffer));
     LOGD("Creating constant buffer with id " + std::to_string(constantBuffer) + " and size " + std::to_string(size));
 
     GL_CHECK(glBindBuffer(GL_UNIFORM_BUFFER, constantBuffer));
     GL_CHECK(glBufferData(GL_UNIFORM_BUFFER, size, nullptr, GL_DYNAMIC_DRAW));
     m_constantBuffers.emplace(object, constantBuffer);
-	return true;
+    return true;
 }
 
 // TODO: How to handle vertex layout? Right now only support single float4:position/color
@@ -108,7 +108,7 @@ bool RendererOGL::CreateVertexBuffer(const GfxObject& object, uint32_t count) {
 }
 
 void* RendererOGL::MapConstantBuffer(const GfxObject& object) {
-	const auto constBufferIt = m_constantBuffers.find(object);
+    const auto constBufferIt = m_constantBuffers.find(object);
     //LOGD("Mapping const buffer with id " + std::to_string(constBufferIt->second));
     assert(constBufferIt != m_constantBuffers.end() && "Failed to find requested constant buffer");
     GL_CHECK(glBindBuffer(GL_UNIFORM_BUFFER, constBufferIt->second));
@@ -117,7 +117,7 @@ void* RendererOGL::MapConstantBuffer(const GfxObject& object) {
 }
 
 void RendererOGL::UnmapConstantBuffer(const GfxObject& object) {
-	const auto constBufferIt = m_constantBuffers.find(object);
+    const auto constBufferIt = m_constantBuffers.find(object);
     //LOGD("Unmapping const buffer with id " + std::to_string(constBufferIt->second));
     assert(constBufferIt != m_constantBuffers.end() && "Failed to find requested constant buffer");
     GL_CHECK(glBindBuffer(GL_UNIFORM_BUFFER, constBufferIt->second));

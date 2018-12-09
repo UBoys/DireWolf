@@ -24,7 +24,8 @@ namespace {
     const float trianglePositionData[] = {
         -1.0f, -1.0f, 0.0f, 1.0f,
         1.0f, -1.0f, 0.0f, 1.0f,
-        0.0f, 1.0f, 0.0f, 1.0f};
+        0.0f, 1.0f, 0.0f, 1.0f
+    };
 
     // Taken from opengl-tutorial
     const GLfloat colorData[] = {
