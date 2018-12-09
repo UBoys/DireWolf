@@ -20,10 +20,8 @@
 #define BUFFER_OFFSET(i) (static_cast<uint8_t*>(nullptr) + i)
 
 namespace {
-    GLuint s_HARDCODED_PROGRAM_REMOVE_ME; // TODO: Remove
-	GLuint s_HARDCODED_BLOCK_INDEX;
-    GLuint s_BUFFER_SLOT = 1;
-    const uint32_t HARDCODED_VERTEX_LAYOUT = 4; // TODO: Remove
+    GLuint s_HARDCODED_PROGRAM_REMOVE_ME;
+    GLuint s_BUFFER_SLOT = 1; // Arbitrary, per constant buffer
 
     void CheckOpenGLError(const char *stmt, const char *fname, int line) {
         GLenum err = glGetError();
@@ -62,11 +60,14 @@ void RendererOGL::Initialize(const RendererCaps& caps, const PlatformData& platf
     // Load all static resources
     s_HARDCODED_PROGRAM_REMOVE_ME = opengl::utils::LoadShader("../../examples/example_spinning_cube/standard.vertex", "../../examples/example_spinning_cube/standard.fragment");
 
-    glDisable(GL_CULL_FACE);
-    glClearColor(0.0f, 1.0f, 0.0f, 1.0f); // Display ugly green color
+    // Enable depth test
+    glEnable(GL_DEPTH_TEST);
+    // Accept fragment if it closer to the camera than the former one
+    glDepthFunc(GL_LESS);
+    glClearColor(0.0f, 0.0f, 0.4f, 0.0f); // Display ugly green color
 
-    s_HARDCODED_BLOCK_INDEX = glGetUniformBlockIndex(s_HARDCODED_PROGRAM_REMOVE_ME, "ShaderConstants");
-    GL_CHECK(glUniformBlockBinding(s_HARDCODED_PROGRAM_REMOVE_ME, s_HARDCODED_BLOCK_INDEX, s_BUFFER_SLOT));
+    const uint8_t blockIndex = glGetUniformBlockIndex(s_HARDCODED_PROGRAM_REMOVE_ME, "ShaderConstants");
+    GL_CHECK(glUniformBlockBinding(s_HARDCODED_PROGRAM_REMOVE_ME, blockIndex, s_BUFFER_SLOT));
 
     // TODO: Part of creating the pipeline state
     GL_CHECK(glUseProgram(s_HARDCODED_PROGRAM_REMOVE_ME));
@@ -83,19 +84,15 @@ bool RendererOGL::CreateConstantBuffer(const GfxObject& object, uint32_t size) {
 	return true;
 }
 
-// TODO: Pass in what desired layout in this function t.ex float4/pos, float4/color, float4/somethingelse. Right now assume float4 positions
+// TODO: How to handle vertex layout? Right now only support single float4:position/color
 bool RendererOGL::CreateVertexBuffer(const GfxObject& object, uint32_t count) {
-    // TODO: Do not assume a single VAO/layout
-
-    LOGD("COUNT" + std::to_string(count));
     GLuint vao;
     GL_CHECK(glGenVertexArrays(1, &vao));
     GL_CHECK(glBindVertexArray(vao));
 
-    const uint32_t elementSize = 4 * sizeof(float) * 2; // TODO: Should be size of the standard vertex
+    const uint32_t elementSize = 4 * sizeof(float) * 2; // TODO/hack. This is an assumption, i.e size of each struct { vec4 position; vec4 color; }
     const uint32_t byteSize = count * elementSize;
 
-    // Allocate buffer
     GLuint vertexBuffer;
     GL_CHECK(glGenBuffers(1, &vertexBuffer));
     GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer));
@@ -103,16 +100,16 @@ bool RendererOGL::CreateVertexBuffer(const GfxObject& object, uint32_t count) {
 
     GL_CHECK(glEnableVertexAttribArray(0));
     GL_CHECK(glEnableVertexAttribArray(1));
-    GL_CHECK(glVertexAttribPointer(0, HARDCODED_VERTEX_LAYOUT, GL_FLOAT, GL_FALSE, elementSize, BUFFER_OFFSET(0)));
-    GL_CHECK(glVertexAttribPointer(1, HARDCODED_VERTEX_LAYOUT, GL_FLOAT, GL_FALSE, elementSize, BUFFER_OFFSET(sizeof(float) * 4)));
+    GL_CHECK(glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, elementSize, BUFFER_OFFSET(0)));
+    GL_CHECK(glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, elementSize, BUFFER_OFFSET(sizeof(float) * 4)));
 
-    m_vertexBuffers.emplace(object, vertexBuffer); // TODO: Store other state here such as vao, count, base vertex, etc
+    m_vertexBuffers.emplace(object, vertexBuffer);
     return true;
 }
 
 void* RendererOGL::MapConstantBuffer(const GfxObject& object) {
 	const auto constBufferIt = m_constantBuffers.find(object);
-    LOGD("Mapping const buffer with id " + std::to_string(constBufferIt->second));
+    //LOGD("Mapping const buffer with id " + std::to_string(constBufferIt->second));
     assert(constBufferIt != m_constantBuffers.end() && "Failed to find requested constant buffer");
     GL_CHECK(glBindBuffer(GL_UNIFORM_BUFFER, constBufferIt->second));
     void* mappedBuffer = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
@@ -121,7 +118,7 @@ void* RendererOGL::MapConstantBuffer(const GfxObject& object) {
 
 void RendererOGL::UnmapConstantBuffer(const GfxObject& object) {
 	const auto constBufferIt = m_constantBuffers.find(object);
-    LOGD("Unmapping const buffer with id " + std::to_string(constBufferIt->second));
+    //LOGD("Unmapping const buffer with id " + std::to_string(constBufferIt->second));
     assert(constBufferIt != m_constantBuffers.end() && "Failed to find requested constant buffer");
     GL_CHECK(glBindBuffer(GL_UNIFORM_BUFFER, constBufferIt->second));
     GL_CHECK(glUnmapBuffer(GL_UNIFORM_BUFFER));
@@ -150,7 +147,7 @@ bool RendererOGL::CreatePipelineState(const GfxObject& object, const PipelineSta
 }
 
 void RendererOGL::Render(const std::vector<RenderCommand>& commandBuffer) {
-    glClear(GL_COLOR_BUFFER_BIT); // TODO: Separate clear command?
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // TODO: Separate clear command?
     for (const RenderCommand& command : commandBuffer) {
         switch (command.type) {
             case BIND_VERTEX_BUFFER:

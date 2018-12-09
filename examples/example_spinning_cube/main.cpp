@@ -6,6 +6,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "glm/gtx/string_cast.hpp"
 
+#include <chrono>
+
 #if defined(_WIN32)
   #define GLFW_EXPOSE_NATIVE_WIN32
 #elif defined(__APPLE__)
@@ -18,12 +20,13 @@ namespace {
     const uint16_t WINDOW_HEIGHT = 768;
     const uint8_t VERTEX_LAYOUT  = 4;
 
+    // Smaller data set
     const float trianglePositionData[] = {
         -1.0f, -1.0f, 0.0f, 1.0f,
         1.0f, -1.0f, 0.0f, 1.0f,
         0.0f, 1.0f, 0.0f, 1.0f};
 
-    // One color for each vertex. They were generated randomly.
+    // Taken from opengl-tutorial
     const GLfloat colorData[] = {
         0.583f, 0.771f, 0.014f, 1.0f,
         0.609f, 0.115f, 0.436f, 1.0f,
@@ -145,7 +148,6 @@ int main() {
     dw::PlatformData platformData = { _GetGlfwNativeWindowhandle(s_window) };
     auto renderEngine = std::make_unique<dw::RenderEngine>(platformData, initData);
 
-    // Shader data
     struct ShaderData {
         glm::mat4 model;
         glm::mat4 view;
@@ -167,6 +169,7 @@ int main() {
     };
 
     std::vector<StandardVertex> vertexData;
+    // Convert raw data
     for (size_t i = 0; i < sizeof(positionData) / sizeof(float); i += VERTEX_LAYOUT) {
         glm::vec4 position = glm::vec4(positionData[i + 0], positionData[i + 1], positionData[i + 2], positionData[i + 3]);
         glm::vec4 color = glm::vec4(colorData[i + 0], colorData[i + 1], colorData[i + 2], colorData[i + 3]);
@@ -174,11 +177,12 @@ int main() {
         vertexData.push_back(vertex);
     }
 
-    std::cerr << "NUM VERTICES " << numVertices << std::endl;
-    std::cerr << "SIZE OF VECTOR " << vertexData.size() << std::endl;
-    std::cerr << "SIZE OF STNADRAD VERTEX" << sizeof(StandardVertex) << std::endl;
-    std::cerr << "SIZE OF POS DATA " << sizeof(positionData) << std::endl;
-    std::cerr << "SIZE OF VECTOR ETC " << vertexData.size() * sizeof(StandardVertex) << std::endl;
+    // Sanity check
+    // std::cerr << "NUM VERTICES " << numVertices << std::endl;
+    // std::cerr << "SIZE OF VECTOR " << vertexData.size() << std::endl;
+    // std::cerr << "SIZE OF STNADRAD VERTEX" << sizeof(StandardVertex) << std::endl;
+    // std::cerr << "SIZE OF POS DATA " << sizeof(positionData) << std::endl;
+    // std::cerr << "SIZE OF VECTOR ETC " << vertexData.size() * sizeof(StandardVertex) << std::endl;
 
     // Vertex data
     dw::GfxObject vertexBuffer;
@@ -207,13 +211,24 @@ int main() {
     renderCommands.push_back({ dw::BIND_VERTEX_BUFFER, static_cast<void*>(&vCommandData) });
     renderCommands.push_back({ dw::DRAW, static_cast<void*>(&drawCommand) });
 
+    // "Game loop"
+    auto lastTime = std::chrono::high_resolution_clock::now();
     while (true) {
-        // Dispatch render commands for a frame
+        // Update
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<float> deltaTime = currentTime - lastTime;
+        shaderData.model = glm::rotate(shaderData.model, 0.01f * deltaTime.count() * 35.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+        lastTime = currentTime;
+
+        // Render
+        void* cb = renderEngine->MapConstantBuffer(constantBuffer);
+        std::memcpy(cb, &shaderData, sizeof(shaderData));
+        renderEngine->UnmapConstantBuffer(constantBuffer);
         renderEngine->Render(renderCommands);
+
         // Window events
         glfwPollEvents();
     }
-
 
     std::cout << "\n\nPress enter to EXIT";
     std::cin.get();
