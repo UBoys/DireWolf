@@ -17,11 +17,13 @@
 #include "opengl_utils.h"
 #include "utils/logger.h"
 
+#define BUFFER_OFFSET(i) (static_cast<uint8_t*>(nullptr) + i)
+
 namespace {
     GLuint s_HARDCODED_PROGRAM_REMOVE_ME; // TODO: Remove
 	GLuint s_HARDCODED_BLOCK_INDEX;
     GLuint s_BUFFER_SLOT = 1;
-    const uint32_t HARDCODED_VERTEX_ELEMENT_SIZE = sizeof(float) * 4; // TODO: Remove
+    const uint32_t HARDCODED_VERTEX_LAYOUT = 4; // TODO: Remove
 
     void CheckOpenGLError(const char *stmt, const char *fname, int line) {
         GLenum err = glGetError();
@@ -84,11 +86,13 @@ bool RendererOGL::CreateConstantBuffer(const GfxObject& object, uint32_t size) {
 // TODO: Pass in what desired layout in this function t.ex float4/pos, float4/color, float4/somethingelse. Right now assume float4 positions
 bool RendererOGL::CreateVertexBuffer(const GfxObject& object, uint32_t count) {
     // TODO: Do not assume a single VAO/layout
+
+    LOGD("COUNT" + std::to_string(count));
     GLuint vao;
     GL_CHECK(glGenVertexArrays(1, &vao));
     GL_CHECK(glBindVertexArray(vao));
 
-    const uint32_t elementSize = HARDCODED_VERTEX_ELEMENT_SIZE;
+    const uint32_t elementSize = 4 * sizeof(float) * 2; // TODO: Should be size of the standard vertex
     const uint32_t byteSize = count * elementSize;
 
     // Allocate buffer
@@ -98,9 +102,11 @@ bool RendererOGL::CreateVertexBuffer(const GfxObject& object, uint32_t count) {
     GL_CHECK(glBufferData(GL_ARRAY_BUFFER, byteSize, nullptr, GL_STATIC_DRAW));
 
     GL_CHECK(glEnableVertexAttribArray(0));
-    GL_CHECK(glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, elementSize, static_cast<void*>(0)));
+    GL_CHECK(glEnableVertexAttribArray(1));
+    GL_CHECK(glVertexAttribPointer(0, HARDCODED_VERTEX_LAYOUT, GL_FLOAT, GL_FALSE, elementSize, BUFFER_OFFSET(0)));
+    GL_CHECK(glVertexAttribPointer(1, HARDCODED_VERTEX_LAYOUT, GL_FLOAT, GL_FALSE, elementSize, BUFFER_OFFSET(sizeof(float) * 4)));
 
-    m_vertexBuffers.emplace(object, vertexBuffer); // TODO: Store other state here such as vao, count, base vertex, etc 
+    m_vertexBuffers.emplace(object, vertexBuffer); // TODO: Store other state here such as vao, count, base vertex, etc
     return true;
 }
 
