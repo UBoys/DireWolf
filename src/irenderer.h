@@ -7,6 +7,7 @@ namespace dw {
 enum RenderCommandType {
     BIND_PIPELINE_STATE,
     BIND_VERTEX_BUFFER,
+    BIND_CONSTANT_BUFFER,
     BIND_INDEX_BUFFER,
     BIND_TEXTURES,
     BIND_SAMPLERS,

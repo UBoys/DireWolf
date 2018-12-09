@@ -20,8 +20,30 @@
 namespace {
     GLuint s_HARDCODED_PROGRAM_REMOVE_ME; // TODO: Remove
 	GLuint s_HARDCODED_BLOCK_INDEX;
+    GLuint s_BUFFER_SLOT = 1;
     const uint32_t HARDCODED_VERTEX_ELEMENT_SIZE = sizeof(float) * 4; // TODO: Remove
+
+    void CheckOpenGLError(const char *stmt, const char *fname, int line) {
+        GLenum err = glGetError();
+        if (err != GL_NO_ERROR) {
+            std::cerr << "OOPS!";
+            printf("OpenGL error %08x, at %s:%i - for %s\n", err, fname, line, stmt);
+            abort();
+        }
+    }
 }
+
+#define _DEBUG // Hack
+
+#ifdef _DEBUG
+  #define GL_CHECK(stmt)                             \
+    do {                                             \
+      stmt;                                        \
+      CheckOpenGLError(#stmt, __FILE__, __LINE__); \
+    } while (0)
+#else
+  #define GL_CHECK(stmt) stmt
+#endif
 
 namespace dw {
 
@@ -37,20 +59,25 @@ void RendererOGL::Initialize(const RendererCaps& caps, const PlatformData& platf
 
     // Load all static resources
     s_HARDCODED_PROGRAM_REMOVE_ME = opengl::utils::LoadShader("../../examples/example_spinning_cube/standard.vertex", "../../examples/example_spinning_cube/standard.fragment");
-    s_HARDCODED_BLOCK_INDEX = glGetUniformBlockIndex(s_HARDCODED_PROGRAM_REMOVE_ME, "shader_data");
 
-	glClearColor(0.0f, 1.0f, 0.0f, 1.0f); // Display ugly green color
+    glDisable(GL_CULL_FACE);
+    glClearColor(0.0f, 1.0f, 0.0f, 1.0f); // Display ugly green color
+
+    s_HARDCODED_BLOCK_INDEX = glGetUniformBlockIndex(s_HARDCODED_PROGRAM_REMOVE_ME, "ShaderConstants");
+    GL_CHECK(glUniformBlockBinding(s_HARDCODED_PROGRAM_REMOVE_ME, s_HARDCODED_BLOCK_INDEX, s_BUFFER_SLOT));
 
     // TODO: Part of creating the pipeline state
-    glUseProgram(s_HARDCODED_PROGRAM_REMOVE_ME);
+    GL_CHECK(glUseProgram(s_HARDCODED_PROGRAM_REMOVE_ME));
 }
 
 bool RendererOGL::CreateConstantBuffer(const GfxObject& object, uint32_t size) {
 	GLuint constantBuffer;
-	glGenBuffers(1, &constantBuffer);
-	glBindBuffer(GL_UNIFORM_BUFFER, constantBuffer);
-	glBufferData(GL_UNIFORM_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
-	m_constantBuffers.emplace(object, constantBuffer);
+	GL_CHECK(glGenBuffers(1, &constantBuffer));
+    LOGD("Creating constant buffer with id " + std::to_string(constantBuffer) + " and size " + std::to_string(size));
+
+    GL_CHECK(glBindBuffer(GL_UNIFORM_BUFFER, constantBuffer));
+    GL_CHECK(glBufferData(GL_UNIFORM_BUFFER, size, nullptr, GL_DYNAMIC_DRAW));
+    m_constantBuffers.emplace(object, constantBuffer);
 	return true;
 }
 
@@ -58,22 +85,20 @@ bool RendererOGL::CreateConstantBuffer(const GfxObject& object, uint32_t size) {
 bool RendererOGL::CreateVertexBuffer(const GfxObject& object, uint32_t count) {
     // TODO: Do not assume a single VAO/layout
     GLuint vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    GL_CHECK(glGenVertexArrays(1, &vao));
+    GL_CHECK(glBindVertexArray(vao));
 
     const uint32_t elementSize = HARDCODED_VERTEX_ELEMENT_SIZE;
     const uint32_t byteSize = count * elementSize;
 
     // Allocate buffer
     GLuint vertexBuffer;
-    glGenBuffers(1, &vertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    GL_CHECK(glGenBuffers(1, &vertexBuffer));
+    GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer));
+    GL_CHECK(glBufferData(GL_ARRAY_BUFFER, byteSize, nullptr, GL_STATIC_DRAW));
 
-    glBufferData(GL_ARRAY_BUFFER, byteSize, nullptr, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, elementSize, static_cast<void*>(0));
+    GL_CHECK(glEnableVertexAttribArray(0));
+    GL_CHECK(glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, elementSize, static_cast<void*>(0)));
 
     m_vertexBuffers.emplace(object, vertexBuffer); // TODO: Store other state here such as vao, count, base vertex, etc 
     return true;
@@ -81,27 +106,27 @@ bool RendererOGL::CreateVertexBuffer(const GfxObject& object, uint32_t count) {
 
 void* RendererOGL::MapConstantBuffer(const GfxObject& object) {
 	const auto constBufferIt = m_constantBuffers.find(object);
+    LOGD("Mapping const buffer with id " + std::to_string(constBufferIt->second));
     assert(constBufferIt != m_constantBuffers.end() && "Failed to find requested constant buffer");
-	glBindBuffer(GL_UNIFORM_BUFFER, constBufferIt->second);
-	void *mappedBuffer = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
-	return mappedBuffer;
+    GL_CHECK(glBindBuffer(GL_UNIFORM_BUFFER, constBufferIt->second));
+    void* mappedBuffer = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
+    return mappedBuffer;
 }
 
 void RendererOGL::UnmapConstantBuffer(const GfxObject& object) {
-	LOGD("Unmapping constant buffer");
 	const auto constBufferIt = m_constantBuffers.find(object);
-	assert(constBufferIt != m_constantBuffers.end() && "Failed to find requested constant buffer");
-	glBindBuffer(GL_UNIFORM_BUFFER, constBufferIt->second);
-	glUnmapBuffer(GL_UNIFORM_BUFFER);
+    LOGD("Unmapping const buffer with id " + std::to_string(constBufferIt->second));
+    assert(constBufferIt != m_constantBuffers.end() && "Failed to find requested constant buffer");
+    GL_CHECK(glBindBuffer(GL_UNIFORM_BUFFER, constBufferIt->second));
+    GL_CHECK(glUnmapBuffer(GL_UNIFORM_BUFFER));
 }
 
 void* RendererOGL::MapVertexBuffer(const GfxObject& object) {
     LOGD("Mapping vertex buffer");
     const auto vertexBufferIt = m_vertexBuffers.find(object);
     assert(vertexBufferIt != m_vertexBuffers.end() && "Failed to find requested vertex buffer");
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBufferIt->second);
-    /*TODO: Remove hardcoded count*/
-    void* result = glMapBufferRange(GL_ARRAY_BUFFER, 0, HARDCODED_VERTEX_ELEMENT_SIZE * 3, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_UNSYNCHRONIZED_BIT);
+    GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vertexBufferIt->second));
+    void *result = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
     return result;
 }
 
@@ -109,8 +134,8 @@ void RendererOGL::UnmapVertexBuffer(const GfxObject& object) {
     LOGD("Unmapping vertex buffer");
     const auto vertexBufferIt = m_vertexBuffers.find(object);
     assert(vertexBufferIt != m_vertexBuffers.end() && "Failed to find requested vertex buffer");
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBufferIt->second);
-    glUnmapBuffer(GL_ARRAY_BUFFER);
+    GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vertexBufferIt->second));
+    GL_CHECK(glUnmapBuffer(GL_ARRAY_BUFFER));
 }
 
 bool RendererOGL::CreatePipelineState(const GfxObject& object, const PipelineState& pipelineState) {
@@ -127,6 +152,9 @@ void RendererOGL::Render(const std::vector<RenderCommand>& commandBuffer) {
                 break;
             case BIND_PIPELINE_STATE:
                 bindPipelineState(static_cast<BindPipelineStateCommandData*>(command.data));
+                break;
+            case BIND_CONSTANT_BUFFER:
+                bindConstantBuffer(static_cast<BindConstantBufferCommandData*>(command.data), 0);
                 break;
             case DRAW:
                 draw(static_cast<DrawCommandData*>(command.data));
@@ -145,23 +173,19 @@ void RendererOGL::bindPipelineState(BindPipelineStateCommandData* data) const {
 }
 
 void RendererOGL::bindConstantBuffer(BindConstantBufferCommandData* data, uint8_t slot) const {
-	const auto constBufferIt = m_vertexBuffers.find(*data->object);
-
-    // TODO: Make our own asserts DW_ASSERT() or something.
-    assert(constBufferIt != m_constantBuffers.end() && "Failed to find requested vertex buffer");
-	glBindBufferBase(GL_UNIFORM_BUFFER, slot, constBufferIt->second);	
+    const auto constBufferIt = m_constantBuffers.find(*data->object);
+    assert(constBufferIt != m_constantBuffers.end() && slot == 0 && "Failed to find requested constant buffer");
+    GL_CHECK(glBindBufferBase(GL_UNIFORM_BUFFER, s_BUFFER_SLOT, constBufferIt->second));
 }
 
 void RendererOGL::bindVertexBuffer(BindVertexBufferCommandData* data) const {
     const auto vertexBufferIt = m_vertexBuffers.find(*data->object);
-
-    // TODO: Make our own asserts DW_ASSERT() or something.
     assert(vertexBufferIt != m_vertexBuffers.end() && "Failed to find requested vertex buffer");
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBufferIt->second);
+    GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, vertexBufferIt->second));
 }
 
 void RendererOGL::draw(DrawCommandData* data) const {
-    glDrawArrays(GL_TRIANGLES, data->startVertex, data->count);
+    GL_CHECK(glDrawArrays(GL_TRIANGLES, data->startVertex, data->count));
 }
 
 }  // namespace dw

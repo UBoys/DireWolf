@@ -9,11 +9,7 @@ namespace dw {
 
 RenderEngine::RenderEngine(const PlatformData& platformData, const InitData& initData) {
 // TODO: How to non-IDE detect Release/Debug mode? We want DW_DEBUG or equivalent 
-#if defined(_DEBUG)
     Logger::Init(Logger::DEBUG, "");
-#else
-    Logger::Init(Logger::INFO, "");
-#endif
     LOGD("Setting up DireWolf!");
 
     switch(initData.rendererType) {
@@ -30,6 +26,18 @@ RenderEngine::RenderEngine(const PlatformData& platformData, const InitData& ini
 
 RenderEngine::~RenderEngine() {
     Logger::Destroy();
+}
+
+bool RenderEngine::CreateConstantBuffer(const GfxObject& object, uint32_t size) const {
+    return m_renderer->CreateConstantBuffer(object, size);
+}
+
+void* RenderEngine::MapConstantBuffer(const GfxObject& object) const {
+    return m_renderer->MapConstantBuffer(object);
+}
+
+void RenderEngine::UnmapConstantBuffer(const GfxObject& object) const {
+    m_renderer->UnmapConstantBuffer(object);
 }
 
 bool RenderEngine::CreateVertexBuffer(const GfxObject& object, uint32_t count) const {

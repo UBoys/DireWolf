@@ -11,6 +11,10 @@ public:
     RenderEngine(const PlatformData& platformData, const InitData& initData);
     ~RenderEngine();
 
+    bool CreateConstantBuffer(const GfxObject& object, uint32_t size) const;
+    void* MapConstantBuffer(const GfxObject& object) const;
+    void UnmapConstantBuffer(const GfxObject& object) const;
+
     /* Creates a vertex buffer resource */
     bool CreateVertexBuffer(const GfxObject& object, uint32_t count) const;
     /* Get a vertex buffer to fill with data */

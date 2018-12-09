@@ -79,8 +79,8 @@ int main() {
     dw::DrawCommandData drawCommand = { 3, 0 };
 
     // Give the per-frame commands to the render queue.
-    renderCommands.push_back({ dw::BindVertexBufferCommand, static_cast<void*>(&vCommandData) });
-    renderCommands.push_back({ dw::DrawCommand, static_cast<void*>(&drawCommand) });
+    renderCommands.push_back({ dw::BIND_VERTEX_BUFFER, static_cast<void*>(&vCommandData) });
+    renderCommands.push_back({ dw::DRAW, static_cast<void*>(&drawCommand) });
 
     while (true) {
         // Dispatch render commands for a frame
