@@ -1,0 +1,17 @@
+#version 330 core
+
+layout(location = 0) in vec4 position;
+layout(location = 1) in vec4 uv;
+
+layout(std140) uniform ShaderConstants {
+    mat4 model;
+    mat4 view;
+    mat4 proj;
+};
+
+out vec2 v_uv;
+
+void main() {
+    v_uv = uv.xy;
+    gl_Position = proj * view * model * vec4(position.xyz, 1.0);
+}

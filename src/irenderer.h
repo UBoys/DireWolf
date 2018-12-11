@@ -47,6 +47,10 @@ struct BindPipelineStateCommandData {
     GfxObject* object;
 };
 
+struct BindTexturesCommandData {
+    std::vector<GfxObject*> objects;
+};
+
 struct DrawCommandData {
     uint32_t count;
     uint32_t startVertex;
@@ -58,11 +62,21 @@ struct RendererCaps {
     bool debug;
 };
 
+// TODO: Move shit out
+enum PixelFormat : uint8_t {
+    R8G8B8A8_UNORM,
+    R8_UNORM
+};
+
+struct TextureDescription {
+    uint32_t width;
+    uint32_t height;
+    PixelFormat format;
+};
+
 struct PlatformData;
 struct InitData;
-struct TextureDescription {};
 struct SamplerDescription {};
-// TODO: 
 struct PipelineState {
     char* vertexShader;
     char* fragmentShader;
@@ -78,7 +92,7 @@ public:
     virtual bool CreateVertexBuffer(const GfxObject& object, uint32_t count) = 0;
     virtual bool CreateIndexBuffer(const GfxObject& object, uint32_t count) = 0;
     virtual bool CreatePipelineState(const GfxObject& object, const PipelineState& state) = 0;
-    virtual bool CreateTexture(const GfxObject& object, const TextureDescription& description, const std::vector<void*>& data) = 0;
+    virtual bool CreateTexture(const GfxObject& object, const TextureDescription& description, void* data, uint32_t dataLength) = 0;
     virtual bool CreateSamplerState(const GfxObject& object, const SamplerDescription& description) = 0;
 
     virtual void* MapConstantBuffer(const GfxObject& handle) = 0;
