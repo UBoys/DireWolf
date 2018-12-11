@@ -16,6 +16,10 @@ add_executable(example_spinning_cube example_spinning_cube/main.cpp)
 target_link_libraries(example_spinning_cube ${PROJECT_NAME} glfw)
 target_include_directories(example_spinning_cube PUBLIC ../include ext/glm)
 
+add_executable(example_textured_cube example_textured_cube/main.cpp)
+target_link_libraries(example_textured_cube ${PROJECT_NAME} glfw)
+target_include_directories(example_textured_cube PUBLIC ../include ext/glm)
+
 if (DIREWOLF_VULKAN_ENABLED)
   target_compile_definitions(example_vulkan PRIVATE DW_VULKAN_ENABLED=1)
 endif (DIREWOLF_VULKAN_ENABLED)

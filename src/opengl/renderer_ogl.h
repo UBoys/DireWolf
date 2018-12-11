@@ -26,7 +26,7 @@ public:
     virtual bool CreateIndexBuffer(const GfxObject& object, uint32_t count) override { return false; }
     virtual bool CreatePipelineState(const GfxObject& object, const PipelineState& state) override;
     virtual bool CreateSamplerState(const GfxObject& object, const SamplerDescription& description) override { return false; }
-    virtual bool CreateTexture(const GfxObject& object, const TextureDescription& description, const std::vector<void*>& data) override { return false; }
+    virtual bool CreateTexture(const GfxObject& object, const TextureDescription& description, void* data, uint32_t dataLength) override;
 
     virtual void* MapConstantBuffer(const GfxObject& handle) override;
     virtual void* MapVertexBuffer(const GfxObject& handle) override;
@@ -45,11 +45,13 @@ public:
     virtual void Render(const std::vector<RenderCommand>& commandBuffer) override;
 
 private:
+	void bindTextures(BindTexturesCommandData* data) const; 
     void bindConstantBuffer(BindConstantBufferCommandData* data, uint8_t slot) const;
     void bindVertexBuffer(BindVertexBufferCommandData* data) const;
     void bindPipelineState(BindPipelineStateCommandData* data) const;
     void draw(DrawCommandData* data) const;
 
+	std::map<GfxObject, GLuint> m_textures;
     std::map<GfxObject, GLuint> m_vertexBuffers;
     std::map<GfxObject, GLuint> m_constantBuffers;
     std::unique_ptr<IRenderContextOGL> m_renderContext;
