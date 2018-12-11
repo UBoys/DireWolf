@@ -45,13 +45,13 @@ public:
     virtual void Render(const std::vector<RenderCommand>& commandBuffer) override;
 
 private:
-	void bindTextures(BindTexturesCommandData* data) const; 
+    void bindTextures(BindTexturesCommandData* data) const; 
     void bindConstantBuffer(BindConstantBufferCommandData* data, uint8_t slot) const;
     void bindVertexBuffer(BindVertexBufferCommandData* data) const;
     void bindPipelineState(BindPipelineStateCommandData* data) const;
     void draw(DrawCommandData* data) const;
 
-	std::map<GfxObject, GLuint> m_textures;
+    std::map<GfxObject, GLuint> m_textures;
     std::map<GfxObject, GLuint> m_vertexBuffers;
     std::map<GfxObject, GLuint> m_constantBuffers;
     std::unique_ptr<IRenderContextOGL> m_renderContext;

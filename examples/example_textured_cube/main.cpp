@@ -20,63 +20,63 @@ namespace {
     const uint16_t WINDOW_HEIGHT = 768;
     const uint8_t VERTEX_LAYOUT  = 4;
 
-	// Copy pasta from opengl tutorial
-	void* loadBMP(const char* path, unsigned int& imageSize, unsigned int& width, unsigned int& height) {
-		printf("Reading image %s\n", path);
+    // Copy pasta from opengl tutorial
+    void* loadBMP(const char* path, unsigned int& imageSize, unsigned int& width, unsigned int& height) {
+        printf("Reading image %s\n", path);
 
-		// Data read from the header of the BMP file
-		unsigned char header[54];
-		unsigned int dataPos;
-		// Actual RGB data
-		unsigned char * data;
+        // Data read from the header of the BMP file
+        unsigned char header[54];
+        unsigned int dataPos;
+        // Actual RGB data
+        unsigned char * data;
 
-		// Open the file
-		FILE* file = fopen(path,"rb");
-		if (!file){
-			printf("%s could not be opened. Are you in the right directory ? Don't forget to read the FAQ !\n", path);
-			getchar();
-			return 0;
-		}
+        // Open the file
+        FILE* file = fopen(path,"rb");
+        if (!file){
+            printf("%s could not be opened. Are you in the right directory ? Don't forget to read the FAQ !\n", path);
+            getchar();
+            return 0;
+        }
 
-		// Read the header, i.e. the 54 first bytes
+        // Read the header, i.e. the 54 first bytes
 
-		// If less than 54 bytes are read, problem
-		if ( fread(header, 1, 54, file)!=54 ){ 
-			printf("Not a correct BMP file\n");
-			fclose(file);
-			return 0;
-		}
-		// A BMP files always begins with "BM"
-		if ( header[0]!='B' || header[1]!='M' ){
-			printf("Not a correct BMP file\n");
-			fclose(file);
-			return 0;
-		}
-		// Make sure this is a 24bpp file
-		if ( *(int*)&(header[0x1E])!=0  )         {printf("Not a correct BMP file\n");    fclose(file); return 0;}
-		if ( *(int*)&(header[0x1C])!=24 )         {printf("Not a correct BMP file\n");    fclose(file); return 0;}
+        // If less than 54 bytes are read, problem
+        if ( fread(header, 1, 54, file)!=54 ){
+            printf("Not a correct BMP file\n");
+            fclose(file);
+            return 0;
+        }
+        // A BMP files always begins with "BM"
+        if ( header[0]!='B' || header[1]!='M' ){
+            printf("Not a correct BMP file\n");
+            fclose(file);
+            return 0;
+        }
+        // Make sure this is a 24bpp file
+        if ( *(int*)&(header[0x1E])!=0  )         {printf("Not a correct BMP file\n");    fclose(file); return 0;}
+        if ( *(int*)&(header[0x1C])!=24 )         {printf("Not a correct BMP file\n");    fclose(file); return 0;}
 
-		// Read the information about the image
-		dataPos    = *(int*)&(header[0x0A]);
-		imageSize  = *(int*)&(header[0x22]);
-		width      = *(int*)&(header[0x12]);
-		height     = *(int*)&(header[0x16]);
+        // Read the information about the image
+        dataPos    = *(int*)&(header[0x0A]);
+        imageSize  = *(int*)&(header[0x22]);
+        width      = *(int*)&(header[0x12]);
+        height     = *(int*)&(header[0x16]);
 
-		// Some BMP files are misformatted, guess missing information
-		if (imageSize==0)    imageSize=width*height*3; // 3 : one byte for each Red, Green and Blue component
-		if (dataPos==0)      dataPos=54; // The BMP header is done that way
+        // Some BMP files are misformatted, guess missing information
+        if (imageSize==0)    imageSize=width*height*3; // 3 : one byte for each Red, Green and Blue component
+        if (dataPos==0)      dataPos=54; // The BMP header is done that way
 
-		// Create a buffer
-		data = new unsigned char [imageSize];
+        // Create a buffer
+        data = new unsigned char [imageSize];
 
-		// Read the actual data from the file into the buffer
-		fread(data, 1, imageSize, file);
+        // Read the actual data from the file into the buffer
+        fread(data, 1, imageSize, file);
 
-		// Everything is in memory now, the file can be closed.
-		fclose (file);
+        // Everything is in memory now, the file can be closed.
+        fclose (file);
 
-		return data;
-	}
+        return data;
+    }
 
     const float uvData[] = {
         0.000059f, 1.0f-0.000004f, 0.0f, 0.0f,
@@ -228,14 +228,14 @@ int main() {
         vertexData.push_back(vertex);
     }
 
-	uint32_t imageSize;
-	uint32_t width;
-	uint32_t height;
-	void* imageData = loadBMP("../../examples/example_textured_cube/uvtemplate.bmp", imageSize, width, height);
-	
-	// Texture data
-	dw::GfxObject textureHandle;
-	renderEngine->CreateTexture(textureHandle, {width, height, dw::PixelFormat::R8G8B8A8_UNORM}, imageData, imageSize);
+    uint32_t imageSize;
+    uint32_t width;
+    uint32_t height;
+    void* imageData = loadBMP("../../examples/example_textured_cube/uvtemplate.bmp", imageSize, width, height);
+
+    // Texture data
+    dw::GfxObject textureHandle;
+    renderEngine->CreateTexture(textureHandle, {width, height, dw::PixelFormat::R8G8B8A8_UNORM}, imageData, imageSize);
 
     // Sanity check
     // std::cerr << "NUM VERTICES " << numVertices << std::endl;
@@ -265,13 +265,13 @@ int main() {
     // Data needed for the draw command (count and start vertex for now)
     dw::DrawCommandData drawCommand = { numVertices, /*offset=*/0 };
 
-	dw::BindTexturesCommandData bindTexturesCommandData = { { &textureHandle } };
+    dw::BindTexturesCommandData bindTexturesCommandData = { { &textureHandle } };
     dw::BindConstantBufferCommandData cCommandData = { &constantBuffer };
 
     // Give the per-frame commands to the render queue.
     renderCommands.push_back({ dw::BIND_CONSTANT_BUFFER, static_cast<void *>(&cCommandData)});
     renderCommands.push_back({ dw::BIND_VERTEX_BUFFER, static_cast<void*>(&vCommandData) });
-	renderCommands.push_back({ dw::BIND_TEXTURES, static_cast<void*>(&bindTexturesCommandData) });
+    renderCommands.push_back({ dw::BIND_TEXTURES, static_cast<void*>(&bindTexturesCommandData) });
     renderCommands.push_back({ dw::DRAW, static_cast<void*>(&drawCommand) });
 
     // "Game loop"

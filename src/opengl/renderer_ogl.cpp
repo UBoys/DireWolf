@@ -74,33 +74,33 @@ void RendererOGL::Initialize(const RendererCaps& caps, const PlatformData& platf
 }
 
 bool RendererOGL::CreateTexture(const GfxObject& object, const TextureDescription& description, void* data, uint32_t dataLength) {
-	GLuint textureId;
-	glGenTextures(1, &textureId);
+    GLuint textureId;
+    glGenTextures(1, &textureId);
 
-	// TODO: Move to some util/helper
-	GLuint textureFormat;
-	switch (description.format) {
-		case R8G8B8A8_UNORM:
-			textureFormat = GL_RGB;
-			break;
-		default:
-			assert(false && "Unimplemented texture format!\n");
-			break;
-	}
+    // TODO: Move to some util/helper
+    GLuint textureFormat;
+    switch (description.format) {
+        case R8G8B8A8_UNORM:
+            textureFormat = GL_RGB;
+            break;
+        default:
+            assert(false && "Unimplemented texture format!\n");
+            break;
+    }
 
-	glBindTexture(GL_TEXTURE_2D, textureId);
-	glTexImage2D(GL_TEXTURE_2D, 0, textureFormat, description.width, description.height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    glTexImage2D(GL_TEXTURE_2D, 0, textureFormat, description.width, description.height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
 
-	// TODO: This is really part of the sampler state
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    // TODO: This is really part of the sampler state
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	// TODO: Mipmaps should not be hardcoded
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glGenerateMipmap(GL_TEXTURE_2D);
+    // TODO: Mipmaps should not be hardcoded
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glGenerateMipmap(GL_TEXTURE_2D);
 
-	m_textures.emplace(object, textureId);
-	return true;
+    m_textures.emplace(object, textureId);
+    return true;
 }
 
 
@@ -181,9 +181,9 @@ void RendererOGL::Render(const std::vector<RenderCommand>& commandBuffer) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // TODO: Separate clear command?
     for (const RenderCommand& command : commandBuffer) {
         switch (command.type) {
-			case BIND_TEXTURES:
-				bindTextures(static_cast<BindTexturesCommandData*>(command.data));
-				break;
+            case BIND_TEXTURES:
+                bindTextures(static_cast<BindTexturesCommandData*>(command.data));
+                break;
             case BIND_VERTEX_BUFFER:
                 bindVertexBuffer(static_cast<BindVertexBufferCommandData*>(command.data));
                 break;
@@ -204,14 +204,14 @@ void RendererOGL::Render(const std::vector<RenderCommand>& commandBuffer) {
 }
 
 void RendererOGL::bindTextures(BindTexturesCommandData* data) const {
-	uint8_t texUnit = 0;
-	for (auto&& object : data->objects) {
-		const auto it = m_textures.find(*object);
-		assert(it != m_textures.end() && "Asked for non-existent texture\n");
-		// Texture unit binds to samplers and texture data
-		glActiveTexture(GL_TEXTURE0 + texUnit++);
-		glBindTexture(GL_TEXTURE_2D, it->second);
-	}
+    uint8_t texUnit = 0;
+    for (auto&& object : data->objects) {
+        const auto it = m_textures.find(*object);
+        assert(it != m_textures.end() && "Asked for non-existent texture\n");
+        // Texture unit binds to samplers and texture data
+        glActiveTexture(GL_TEXTURE0 + texUnit++);
+        glBindTexture(GL_TEXTURE_2D, it->second);
+    }
 }
 
 void RendererOGL::bindPipelineState(BindPipelineStateCommandData* data) const {

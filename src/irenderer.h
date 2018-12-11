@@ -48,7 +48,7 @@ struct BindPipelineStateCommandData {
 };
 
 struct BindTexturesCommandData {
-	std::vector<GfxObject*> objects;
+    std::vector<GfxObject*> objects;
 };
 
 struct DrawCommandData {
@@ -64,14 +64,14 @@ struct RendererCaps {
 
 // TODO: Move shit out
 enum PixelFormat : uint8_t {
-	R8G8B8A8_UNORM,
-	R8_UNORM
+    R8G8B8A8_UNORM,
+    R8_UNORM
 };
 
 struct TextureDescription {
-	uint32_t width;
-	uint32_t height;
-	PixelFormat format;
+    uint32_t width;
+    uint32_t height;
+    PixelFormat format;
 };
 
 struct PlatformData;

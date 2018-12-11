@@ -29,11 +29,11 @@ RenderEngine::~RenderEngine() {
 }
 
 bool RenderEngine::CreateTexture(const GfxObject& object, const TextureDescription& description, void* data, uint32_t dataLength) {
-	return m_renderer->CreateTexture(object, description, data, dataLength);
+    return m_renderer->CreateTexture(object, description, data, dataLength);
 }
 
 void RenderEngine::DestroyTexture(const GfxObject& object) const {
-	m_renderer->DestroyTexture(object);
+    m_renderer->DestroyTexture(object);
 }
 
 bool RenderEngine::CreateConstantBuffer(const GfxObject& object, uint32_t size) const {

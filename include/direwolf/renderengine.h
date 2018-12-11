@@ -15,8 +15,8 @@ public:
     void* MapConstantBuffer(const GfxObject& object) const;
     void UnmapConstantBuffer(const GfxObject& object) const;
 
-	bool CreateTexture(const GfxObject& object, const TextureDescription& description, void* data, uint32_t dataLength);
-	void DestroyTexture(const GfxObject& object) const;
+    bool CreateTexture(const GfxObject& object, const TextureDescription& description, void* data, uint32_t dataLength);
+    void DestroyTexture(const GfxObject& object) const;
 
     /* Creates a vertex buffer resource */
     bool CreateVertexBuffer(const GfxObject& object, uint32_t count) const;
